@@ -1,0 +1,18 @@
+https://www.youtube.com/watch?v=YQ7aLHCTeeE&ab_channel=DroneBotWorkshop
+# Time specific
+https://youtu.be/YQ7aLHCTeeE?si=v2owyeutxFgfnV5z&t=2348
+
+# Other good reference
+https://www.youtube.com/watch?v=utqxfxnCp8M&ab_channel=UtehStr
+
+I only needed to connect gnd, 3v3, nss, mosi, miso, sck.
+
+
+This is the micropython code to use. Instructions for pin connections are decent.
+https://github.com/martynwheeler/u-lora/blob/main/README.md
+
+Python version
+https://github.com/martynwheeler/u-lora/blob/main/README.md
+
+C version
+https://github.com/sandeepmistry/arduino-LoRa/blob/master/README.md
