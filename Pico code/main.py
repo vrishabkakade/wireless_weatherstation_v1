@@ -172,11 +172,12 @@ try:
         humidity_d2 = bme.values[5].to_bytes(2, 'big')
 
         # Rain Gauge
-        # Pin numbers to use and bucket logic got from
+        # Pin numbers and code logic got from
         # https://bc-robotics.com/tutorials/raspberry-pi-pico-weather-station-part-2-micropython/
         # rainfall = (rainCount * bucketSize) / 10.0
         # Sending only the number of bucket tips as it is easy to send int over LoRa.
         # I will convert the number of bucket tips to cm on the receiver side as weewx will expect it in cm.
+        # Sending bytes to LoRa instead of int
         rainfall = rainCount.to_bytes(2, 'big')
         rainCount = 0  # Setting it back to zero for the next loop
 

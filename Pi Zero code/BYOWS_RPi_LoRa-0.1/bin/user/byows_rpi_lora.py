@@ -229,6 +229,11 @@ class ByowsRpiStation(object):
                                                               '0')
             float_value += [tup2]
 
+        # To avoid index out of range error, doing an additional check
+        if len(float_value) != 3:
+            print("Something went wrong in processing the packet. Skipping this packet")
+            return 1
+
         # Sometimes junk data is sent in packets, and this might lead to negative numbers after the decimal point.
         # To avoid the program from stopping, I use the try except block to continue even if the data is incorrect
         try:
