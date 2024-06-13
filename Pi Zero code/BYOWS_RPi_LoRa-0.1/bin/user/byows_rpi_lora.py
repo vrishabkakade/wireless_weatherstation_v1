@@ -66,7 +66,7 @@ def confeditor_loader():
 
 
 class ByowsRpi(weewx.drivers.AbstractDevice):
-    """weewx driver for the Build Your Own Weather Station - Raspberry Pi
+    """weewx driver for the Build Your Own Weather Station - Raspberry Pi with LoRa
 
     """
 
@@ -102,6 +102,12 @@ class ByowsRpiStation(object):
     def __init__(self, **params):
         """ Initialize Object. """
 
+    def get_rainfall(self, bucket_tips):
+        """ Returns rainfall in cm. """
+        bucket_size = 0.2794  # in mm
+        rainfall = (bucket_tips * bucket_size) / 10.0 # Convert to cm
+        return rainfall
+
     def get_data(self):
         """ Generates data packets every time interval. """
 
@@ -109,10 +115,10 @@ class ByowsRpiStation(object):
         sys.path.append(os.path.dirname(os.path.dirname(currentdir)))
 
         # Define the data packet size we expect to receive.
-        # This will be used to check against junk packets and discard them
+        # This will be used to check against junk packets and discard them to
         # Adjust the expected packet size depending on the data being received.
-        # For BME280 sensor values, we expect 12 payload length for data and 1 for header.
-        expected_data_length = 12
+        # For BME280 sensor values, we expect 14 payload lengths for data and 1 for header.
+        expected_data_length = 14
 
         # Begin LoRa radio with connected SPI bus and IO pins (cs and reset) on GPIO
         # SPI is defined by bus ID and cs ID and IO pins defined by chip and offset number
@@ -130,13 +136,13 @@ class ByowsRpiStation(object):
         # print("Set frequency to 433 Mhz")
         LoRa.setFrequency(433000000)
 
-        # Set RX gain. RX gain option are power saving gain or boosted gain
-        # print("Set RX gain to power saving gain")
+        # Set RX gain. RX gain option is power saving gain or boosted gain
+        # print ("Set RX gain to power saving gain")
         LoRa.setRxGain(LoRa.RX_GAIN_POWER_SAVING, LoRa.RX_GAIN_AUTO)  # AGC on, Power saving gain
 
         # Configure modulation parameter including spreading factor (SF), bandwidth (BW), and coding rate (CR)
-        # Receiver must have same SF and BW setting with transmitter to be able to receive LoRa packet
-        # print("Set modulation parameters:\n\tSpreading factor = 7\n\tBandwidth = 125 kHz\n\tCoding rate = 4/5")
+        # Receiver must have the same SF and BW setting with transmitter to be able to receive LoRa packet
+        # print ("Set modulation parameters:\n\tSpreading factor = 7\n\tBandwidth = 125 kHz\n\tCoding rate = 4/5")
         LoRa.setSpreadingFactor(7)  # LoRa spreading factor: 7
         LoRa.setBandwidth(125000)  # Bandwidth: 125 kHz
         LoRa.setCodeRate(5)  # Coding rate: 4/5
@@ -153,7 +159,7 @@ class ByowsRpiStation(object):
 
         # Set synchronize word for public network (0x14).
         # Others that work are 0x10, 0x15, 0x13 as per the sender's configuration
-        # print("Set synchronize word to 0x14")
+        # print ("Set synchronize word to 0x14")
         # LoRa.setSyncWord(0x10)
         LoRa.setSyncWord(0x14)
         # LoRa.setSyncWord(0x15)
@@ -161,12 +167,12 @@ class ByowsRpiStation(object):
 
         # print("\n-- LoRa Receiver --\n")
 
-        # Request for receiving new LoRa packet
+        # Request for receiving a new LoRa packet
         LoRa.request()
-        # Wait for incoming LoRa packet
+        # Wait for an incoming LoRa packet
         LoRa.wait()
 
-        # Put received packet to message and counter variable
+        # Put a received packet to message and counter variable
         # read() and available() method must be called after request() or listen() method
         message = []
         # available() method return remaining received payload length and
@@ -199,20 +205,22 @@ class ByowsRpiStation(object):
             return 1
 
         # Get 2 elements at a time to decode the value to int from 2 int array
-        lg = len(message_no_header)
+        # lg = len(message_no_header) # Skipping the rain which is the 13th and 14th element as the processing is done
+        # separately
+        lg = 12
         lg = lg - 1  # Decrement length by 1 as we start the count from 0
         tup = tuple()
         decoded_tup = []
         for k in range(0, lg, 2):
             tup = [message_no_header[k], message_no_header[k + 1]]
-            # Getting single int from 2 array byte
+            # Getting single int from 2 array bytes
             decoded_tup += [int.from_bytes(tup, byteorder='big', signed=True)]
 
         # Converting the int to float as decoded_tup is now in int format converted from bytes
         float_value = []
         lx = len(decoded_tup)
         lx = lx - 1  # Decrement length by 1 as we start the count from 0
-        # First convert the int to string so that we can add the decimal point
+        # First, convert the int to string so that we can add the decimal point
         for k2 in range(0, lx, 2):
             d2 = decoded_tup[k2 + 1]
             # https://www.geeksforgeeks.org/how-to-add-leading-zeros-to-a-number-in-python/
@@ -221,12 +229,13 @@ class ByowsRpiStation(object):
                                                               '0')
             float_value += [tup2]
 
-        # Sometimes junk data is sent in packets and this might lead to negative numbers after the decimal point.
+        # Sometimes junk data is sent in packets, and this might lead to negative numbers after the decimal point.
         # To avoid the program from stopping, I use the try except block to continue even if the data is incorrect
         try:
             # Converting the string to float
             res = [float(ele) for ele in float_value]
-            print(message[0], "Temperature: ", res[0], "C", "Pressure: ", res[1], "hPa", "Humidity :", res[2], "%")
+            print(message[0], "Temperature: ", res[0], "C", "Pressure: ", res[1], "hPa", "Humidity :", res[2], "%",
+                  "Bucket Tips: ", message_no_header[13])
         except Exception as exc:
             print('[!!!] {err}'.format(err=exc))
 
@@ -244,7 +253,7 @@ class ByowsRpiStation(object):
         # data["soilTemp1"] = self.get_soil_temp()
         # data["windSpeed"] = float(wind_speed)
         # data["windDir"] = wind_dir
-        # data["rain"] = float(self.get_rainfall())
+        data["rain"] = float(self.get_rainfall(message_no_header[13]))
         # data["anemRotations"] = anem_rotations
         # data["timeAnemInterval"] = time_interval
         return data
