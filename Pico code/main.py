@@ -67,7 +67,7 @@ __version__ = "0.1"
 
 from time import sleep
 from ulora import LoRa, ModemConfig, SPIConfig
-from machine import Pin, I2C
+from machine import Pin, I2C, ADC
 import bme280
 import time
 import _thread
@@ -79,8 +79,12 @@ spLock = _thread.allocate_lock()  # creating semaphore
 
 led = Pin("LED", Pin.OUT)
 
+# Global count variables
+windCount = 0
 rainCount = 0
-bucketSize = 0.2794  # in mm
+
+# Wind Vane
+windVane = ADC(Pin(26))  # Assign the Wind Vane to ADC0 (Pin 26)
 
 # initialize I2C
 i2c = I2C(0, sda=Pin(0), scl=Pin(1), freq=400000)
@@ -101,10 +105,16 @@ lora = LoRa(RFM95_SPIBUS, RFM95_INT, CLIENT_ADDRESS, RFM95_CS, reset_pin=RFM95_R
 
 
 def core1_task():
+    """Core 1 handles our monitoring of the Rain Gauge and Anemometer and hosts the Core 1 sensors
+    (Rain Gauge, Anemometer)"""
     global terminate
     # For rainfall
     rainInput = Pin(3, Pin.IN, Pin.PULL_UP)  # Pin 5, GP 3 and other to ground. Order doesn't matter
     rainFlag = 0
+
+    # Anemometer
+    windInput = Pin(8, Pin.IN, Pin.PULL_UP)
+    windFlag = 0
 
     while not terminate:
         spLock.acquire()  # Acquire semaphore lock
@@ -115,11 +125,21 @@ def core1_task():
 
         rainFlag = rainInput.value()  # Set our flag to match our input
 
+        # Anemometer
+        if windInput.value() != 0 or windFlag != 1:
+            pass
+        else:  # Compare to our flag to look for a LOW transit
+            global windCount  # Ensure we write to the global count variable
+            windCount += 1  # Since the sensor has transited low, increase the count by 1
+
+        windFlag = windInput.value()  # Set our flag to match our input
+
         utime.sleep(0.01)  # 0.01 sec or 10us delay
         spLock.release()
     print("New thread is terminating gracefully.")
 
 
+# Start Core 1
 _thread.start_new_thread(core1_task, ())
 
 try:
@@ -172,18 +192,24 @@ try:
         humidity_d2 = bme.values[5].to_bytes(2, 'big')
 
         # Rain Gauge
-        # Pin numbers and code logic got from
+        # Pin numbers to use and bucket logic got from
         # https://bc-robotics.com/tutorials/raspberry-pi-pico-weather-station-part-2-micropython/
         # rainfall = (rainCount * bucketSize) / 10.0
         # Sending only the number of bucket tips as it is easy to send int over LoRa.
         # I will convert the number of bucket tips to cm on the receiver side as weewx will expect it in cm.
-        # Sending bytes to LoRa instead of int
         rainfall = rainCount.to_bytes(2, 'big')
         rainCount = 0  # Setting it back to zero for the next loop
 
+        windcount = windCount.to_bytes(2, 'big')
+        windCount = 0
+
+        windDir = round((windVane.read_u16() / 64) / 4)  # Read A0, convert to 10-bit (0-1023) and further dividing
+        # by 4 to get a number < 255 as it is easy to send and decode
+        windDir = windDir.to_bytes(2, 'big')
+
         # print (rainfall)
         # reading = 'Temperature: ' + temp + '. Humidity: ' + humidity + '. Pressure: ' + pressure
-        reading = [temp_d1, temp_d2, pressure_d1, pressure_d2, humidity_d1, humidity_d2, rainfall]
+        reading = [temp_d1, temp_d2, pressure_d1, pressure_d2, humidity_d1, humidity_d2, rainfall, windcount, windDir]
 
         lora.send_to_wait(reading, SERVER_ADDRESS)  # Sending the readings
         spLock.release()
@@ -193,3 +219,4 @@ except KeyboardInterrupt:
     terminate = True
     time.sleep(0.3)
     print("Main thread terminated gracefully.")
+
