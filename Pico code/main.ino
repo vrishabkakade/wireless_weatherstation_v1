@@ -24,17 +24,17 @@ Dependencies:
 Prerequisites:
     1. LoRa SX127x module is connected to Raspberry Pi Pico Using the below
 
-    Semtech SX127x	Raspberry Pi
-	VCC	            3.3V
-	GND	            GND
-	SCK	            GPIO 6
-	MISO	        GPIO 4
-	MOSI	        GPIO 7
-	NSS	            GPIO 5
-	RESET	        GPIO 27 (I didn't need to use this)
-	DIO1	        -1 (unused)
+    Semtech SX127x  Raspberry Pi
+    VCC                3.3V
+    GND                GND
+    SCK                GPIO 6
+    MISO           GPIO 4
+    MOSI           GPIO 7
+    NSS                GPIO 5
+    RESET          GPIO 27 (I didn't need to use this)
+    DIO1           -1 (unused)
 
-	2. This LoRa sender (server) that is sending data in the format
+    2. This LoRa sender (server) that is sending data in the format
     Example:
         [(1)1,  (2)0, (3)24,    (4)0, (5)81,    (6)3, (7)112,   (8)0, (9)69,    (10)0, (11)66,  (12)0, (13)90,
         (14)3,  (15)5,  (16)12]]
