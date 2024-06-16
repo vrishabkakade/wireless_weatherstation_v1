@@ -344,6 +344,48 @@ class ByowsRpiStation(object):
 
         except Exception as exc:
             print('[!!!] {err}'.format(err=exc))
+            return 1  # This will avoid weewx exiting with index out of range error due to junk data being received
+
+        """ Details of issue with junk data being received. Weewx exits due to this
+        Jun 16 20:40:03 sandboxpizero weewxd[27367]: DEBUG user.byows_rpi_lora: Undecoded: [0, 25, 0, 55, 3, 111, 0, 91, 0, 59, 0, 35, 0, 0, 95]
+        Jun 16 20:40:03 sandboxpizero weewxd[27367]: DEBUG user.byows_rpi_lora: Decoded tup: [25, 55, 879, 91, 59, 35]
+        Jun 16 20:40:03 sandboxpizero weewxd[27367]: DEBUG user.byows_rpi_lora: Temperature: 25.55, Pressure: 879.91, Humidity: 59.35, Bucket Tips: 0, Wind rotations:0, Wind Direction: 95
+        Jun 16 20:40:08 sandboxpizero weewxd[27367]: DEBUG user.byows_rpi_lora: Undecoded: [237, 86, 48, 100, 213, 43, 217, 75, 26, 99, 56, 253, 126, 18, 185]
+        Jun 16 20:40:08 sandboxpizero weewxd[27367]: DEBUG user.byows_rpi_lora: Decoded tup: [-4778, 12388, -10965, -9909, 6755, 14589]
+        Jun 16 20:40:08 sandboxpizero weewxd[27367]: DEBUG user.byows_rpi_lora: Unknown Wind Vane value: 740
+        Jun 16 20:40:08 sandboxpizero weewxd[27367]: INFO weewx.engine: Main loop exiting. Shutting engine down.
+        Jun 16 20:40:08 sandboxpizero weewxd[27367]: INFO weewx.engine: Shutting down StdReport thread
+        Jun 16 20:40:08 sandboxpizero weewxd[27367]: DEBUG weewx.engine: StdReport thread has been terminated
+        Jun 16 20:40:08 sandboxpizero weewxd[27367]: CRITICAL __main__: Caught unrecoverable exception:
+        Jun 16 20:40:08 sandboxpizero weewxd[27367]: CRITICAL __main__:     ****  list index out of range
+        Jun 16 20:40:08 sandboxpizero weewxd[27367]: CRITICAL __main__:     ****  Traceback (most recent call last):
+        Jun 16 20:40:08 sandboxpizero weewxd[27367]: CRITICAL __main__:     ****    File "/usr/share/weewx/weewxd.py", line 166, in main
+        Jun 16 20:40:08 sandboxpizero weewxd[27367]: CRITICAL __main__:     ****      engine.run()
+        Jun 16 20:40:08 sandboxpizero weewxd[27367]: CRITICAL __main__:     ****    File "/usr/share/weewx/weewx/engine.py", line 204, in run
+        Jun 16 20:40:08 sandboxpizero weewxd[27367]: CRITICAL __main__:     ****      for packet in self.console.genLoopPackets():
+        Jun 16 20:40:08 sandboxpizero weewxd[27367]: CRITICAL __main__:     ****    File "/etc/weewx/bin/user/byows_rpi_lora.py", line 87, in genLoopPackets
+        Jun 16 20:40:08 sandboxpizero weewxd[27367]: CRITICAL __main__:     ****      data = self.station.get_data()
+        Jun 16 20:40:08 sandboxpizero weewxd[27367]: CRITICAL __main__:     ****             ^^^^^^^^^^^^^^^^^^^^^^^
+        Jun 16 20:40:08 sandboxpizero weewxd[27367]: CRITICAL __main__:     ****    File "/etc/weewx/bin/user/byows_rpi_lora.py", line 357, in get_data
+        Jun 16 20:40:08 sandboxpizero weewxd[27367]: CRITICAL __main__:     ****      data["outHumidity"] = res[2]
+        Jun 16 20:40:08 sandboxpizero weewxd[27367]: CRITICAL __main__:     ****                            ~~~^^^
+        Jun 16 20:40:08 sandboxpizero weewxd[27367]: CRITICAL __main__:     ****  IndexError: list index out of range
+        Jun 16 20:40:08 sandboxpizero weewxd[27367]: CRITICAL __main__:     ****  Exiting.
+        Jun 16 20:40:08 sandboxpizero weewxd[27367]: Traceback (most recent call last):
+        Jun 16 20:40:08 sandboxpizero weewxd[27367]:   File "/usr/share/weewx/weewxd.py", line 265, in <module>
+        Jun 16 20:40:08 sandboxpizero weewxd[27367]:     main()
+        Jun 16 20:40:08 sandboxpizero weewxd[27367]:   File "/usr/share/weewx/weewxd.py", line 166, in main
+        Jun 16 20:40:08 sandboxpizero weewxd[27367]:     engine.run()
+        Jun 16 20:40:08 sandboxpizero weewxd[27367]:   File "/usr/share/weewx/weewx/engine.py", line 204, in run
+        Jun 16 20:40:08 sandboxpizero weewxd[27367]:     for packet in self.console.genLoopPackets():
+        Jun 16 20:40:08 sandboxpizero weewxd[27367]:   File "/etc/weewx/bin/user/byows_rpi_lora.py", line 87, in genLoopPackets
+        Jun 16 20:40:08 sandboxpizero weewxd[27367]:     data = self.station.get_data()
+        Jun 16 20:40:08 sandboxpizero weewxd[27367]:            ^^^^^^^^^^^^^^^^^^^^^^^
+        Jun 16 20:40:08 sandboxpizero weewxd[27367]:   File "/etc/weewx/bin/user/byows_rpi_lora.py", line 357, in get_data
+        Jun 16 20:40:08 sandboxpizero weewxd[27367]:     data["outHumidity"] = res[2]
+        Jun 16 20:40:08 sandboxpizero weewxd[27367]:                           ~~~^^^
+        Jun 16 20:40:08 sandboxpizero weewxd[27367]: IndexError: list index out of range
+        """
 
         # Show received status in case CRC or header error occur
         status = LoRa.status()
