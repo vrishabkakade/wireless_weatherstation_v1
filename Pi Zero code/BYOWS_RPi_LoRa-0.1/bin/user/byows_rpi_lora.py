@@ -24,22 +24,19 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 __author__ = "Vrishab Kakade"
 __contact__ = "vrishabkakade@gmail.com"
 __copyright__ = "Copyright $YEAR, $COMPANY_NAME"
-__credits__ = ["Jardi A. Martinez Jordan", "Jaganmayi Himamshu"]
+__credits__ = ["Jardi A. Martinez Jordan", "Jaganmayi Himamshu", "Chris @ BC-Robotics"]
 __date__ = "2024/06/11"
 __deprecated__ = False
 __email__ = "vrishabkakade@gmail.com"
 __license__ = "GPLv3"
 __maintainer__ = "developer"
 __status__ = "Production"
-__version__ = "0.1"
+__version__ = "1"
 
-import datetime
-import glob
 import logging  # This supports the new WeeWX 4.x logging methodology
 import math
 import os
 import sys
-import syslog
 import time
 
 import weewx.drivers
@@ -49,7 +46,7 @@ import weewx.drivers
 from .LoRaRF import SX127x, LoRaSpi, LoRaGpio
 
 DRIVER_NAME = "BYOWS_LORA"
-DRIVER_VERSION = "0.1"
+DRIVER_VERSION = "1"
 
 # Initialize the logger for this module
 log = logging.getLogger(__name__)
@@ -96,6 +93,53 @@ class ByowsRpi(weewx.drivers.AbstractDevice):
                 continue
 
 
+def get_rainfall(bucket_tips):
+    """ Returns rainfall in cm. """
+    bucket_size = 0.2794  # in mm
+    rainfall = (bucket_tips * bucket_size) / 10.0  # Convert to cm
+    return rainfall
+
+
+def read_direction(wind_dir):
+    reading = wind_dir * 4
+    if 876 <= reading <= 900:
+        s = 112.5
+    elif 867 <= reading <= 875:
+        s = 67.5
+    elif 846 <= reading <= 866:
+        s = 90.0
+    elif 6 <= reading <= 7:
+        s = 157.5
+    elif 690 <= reading <= 710:
+        s = 135.0
+    elif 8 <= reading <= 9:
+        s = 202.5
+    elif 560 <= reading <= 580:
+        s = 180.0
+    elif 430 <= reading <= 436:
+        s = 22.5
+    elif 370 <= reading <= 390:
+        s = 45.0
+    elif 10 <= reading <= 11:
+        s = 247.5
+    elif 230 <= reading <= 250:
+        s = 225.0
+    elif 180 <= reading <= 200:
+        s = 337.5
+    elif 130 <= reading <= 140:
+        s = 0.0
+    elif 100 <= reading <= 120:
+        s = 292.5
+    elif 70 <= reading <= 90:
+        s = 315.0
+    elif 40 <= reading <= 60:
+        s = 270.0
+    else:
+        log.debug("Unknown Wind Vane value: %s" % str(reading))
+        return None
+    return s
+
+
 class ByowsRpiStation(object):
     """ Object that represents a BYOWS_Station. """
 
@@ -106,12 +150,6 @@ class ByowsRpiStation(object):
         self.anemometer_adjustment = 1.18
         self.CM_IN_A_KM = 100000.0
         self.SECS_IN_AN_HOUR = 3600
-
-    def get_rainfall(self, bucket_tips):
-        """ Returns rainfall in cm. """
-        bucket_size = 0.2794  # in mm
-        rainfall = (bucket_tips * bucket_size) / 10.0  # Convert to cm
-        return rainfall
 
     def reset_wind(self):
         self.last_wind_time = time.time()
@@ -136,46 +174,7 @@ class ByowsRpiStation(object):
 
     def get_wind(self, rotations, wind_dir):
         """ Function that returns wind as a vector: speed, direction."""
-        return self.get_wind_speed(rotations), self.read_direction(wind_dir)
-
-    def read_direction(self, wind_dir):
-        reading = wind_dir * 4
-        if 876 <= reading <= 900:
-            s = 112.5
-        elif 867 <= reading <= 875:
-            s = 67.5
-        elif 846 <= reading <= 866:
-            s = 90.0
-        elif 6 <= reading <= 7:
-            s = 157.5
-        elif 690 <= reading <= 710:
-            s = 135.0
-        elif 8 <= reading <= 9:
-            s = 202.5
-        elif 560 <= reading <= 580:
-            s = 180.0
-        elif 430 <= reading <= 436:
-            s = 22.5
-        elif 370 <= reading <= 390:
-            s = 45.0
-        elif 10 <= reading <= 11:
-            s = 247.5
-        elif 230 <= reading <= 250:
-            s = 225.0
-        elif 180 <= reading <= 200:
-            s = 337.5
-        elif 130 <= reading <= 140:
-            s = 0.0
-        elif 100 <= reading <= 120:
-            s = 292.5
-        elif 70 <= reading <= 90:
-            s = 315.0
-        elif 40 <= reading <= 60:
-            s = 270.0
-        else:
-            log.debug("Unknown Wind Vane value: %s" % str(reading))
-            return None
-        return s
+        return self.get_wind_speed(rotations), read_direction(wind_dir)
 
     def get_data(self):
         """ Generates data packets every time interval. """
@@ -186,8 +185,8 @@ class ByowsRpiStation(object):
         # Define the data packet size we expect to receive.
         # This will be used to check against junk packets and discard them to
         # Adjust the expected packet size depending on the data being received.
-        # For BME280 sensor values, we expect 18 payload lengths for data and 1 for header.
-        expected_data_length = 18
+        # For BME280 sensor values, we expect 15 payload lengths for data and 1 for header.
+        expected_data_length = 15
 
         # Begin LoRa radio with connected SPI bus and IO pins (cs and reset) on GPIO
         # SPI is defined by bus ID and cs ID and IO pins defined by chip and offset number
@@ -252,6 +251,16 @@ class ByowsRpiStation(object):
         counter = [LoRa.read()]  # Read the last byte
         message += counter  # Append the last byte to the message
 
+        """ Packet structure
+        Example:
+        [(1)1,  (2)0, (3)24,    (4)0, (5)81,    (6)3, (7)112,   (8)0, (9)69,    (10)0, (11)66,  (12)0, (13)90,
+        (14)3,  (15)5,  (16)12]]
+        [(1)packet header#,    (2)byte_array, (3)temp_d1,      (4)byte_array, (5)temp_d2,  
+        (6)byte_array, (7)pressure_d1,      (8)byte_array, (9)pressure_d2,      (10)byte_array, (11)humidity_d1, 
+        (12)byte_array, (13)humidity_d2,    (14)rainfall(bucket tips),          (15)windcount (Anemometer rotations), 
+        (16)windDir (Wind vane) ]
+        """
+
         # Print packet/signal status including RSSI, SNR, and signalRSSI
         print("Packet status: RSSI = {0:0.2f} dBm | SNR = {1:0.2f} dB".format(LoRa.packetRssi(), LoRa.snr()))
 
@@ -280,7 +289,7 @@ class ByowsRpiStation(object):
         # The 17th and 18th elements are for Wind Vane.
         lg = 12
         lg = lg - 1  # Decrement length by 1 as we start the count from 0
-        tup = tuple()
+        # tup = tuple() # Should be a tuple as the received data must not be changed
         decoded_tup = []
         for k in range(0, lg, 2):
             tup = [message_no_header[k], message_no_header[k + 1]]
@@ -288,9 +297,12 @@ class ByowsRpiStation(object):
             decoded_tup += [int.from_bytes(tup, byteorder='big', signed=True)]
 
         # Debugging - Writing to file to see where Index out of range error is occurring
-        with open("output.log", "a") as debug_log_file:
-            print("Undecoded:", message_no_header, file=debug_log_file)
-            print("Decoded tup:", decoded_tup, file=debug_log_file)
+        # This is useful if you start weewx through the command line as sudo weewxd
+        # with open("output.log", "a") as debug_log_file:
+        #    print("Undecoded:", message_no_header, file=debug_log_file)
+        #    print("Decoded tup:", decoded_tup, file=debug_log_file)
+        log.debug("Undecoded: %s", message_no_header)
+        log.debug("Decoded tup: %s", decoded_tup)
 
         # Converting the int to float as decoded_tup is now in int format converted from bytes
         float_value = []
@@ -316,15 +328,19 @@ class ByowsRpiStation(object):
             # Converting the string to float
             res = [float(ele) for ele in float_value]
             print(message[0], "Temperature: ", res[0], "C", "Pressure: ", res[1], "hPa", "Humidity :", res[2], "%",
-                  "Bucket Tips: ", message_no_header[13], "Wind rotations", message_no_header[15],
-                  "Wind Direction:", message_no_header[17])
+                  "Bucket Tips: ", message_no_header[12], "Wind rotations", message_no_header[13],
+                  "Wind Direction:", message_no_header[14])
+            log.debug("Temperature: %s, Pressure: %s, Humidity: %s, Bucket Tips: %s, Wind rotations:%s, "
+                      "Wind Direction: %s  ", res[0], res[1], res[2], message_no_header[12],
+                      message_no_header[13], message_no_header[14])
 
             # Debugging - Writing to file to see where Index out of range error is occurring
-            with open("output.log", "a") as debug_log_file:
-                print(message[0], "Temperature: ", res[0], "C", "Pressure: ", res[1], "hPa", "Humidity :", res[2], "%",
-                      "Bucket Tips: ", message_no_header[13], "Wind rotations", message_no_header[15],
-                      "Wind Direction:", message_no_header[17], "len(float_value)", len(float_value),
-                      file=debug_log_file)
+            # This is useful if you start weewx through the command line as sudo weewxd
+            # with open("output.log", "a") as debug_log_file:
+            #    print(message[0], "Temperature: ", res[0], "C", "Pressure: ", res[1], "hPa", "Humidity :", res[2], "%",
+            #          "Bucket Tips: ", message_no_header[12], "Wind rotations", message_no_header[13],
+            #          "Wind Direction:", message_no_header[14], "len(float_value)", len(float_value),
+            #          file=debug_log_file)
 
         except Exception as exc:
             print('[!!!] {err}'.format(err=exc))
@@ -337,16 +353,16 @@ class ByowsRpiStation(object):
             print("Packet header error")
 
         data = dict()
-        anem_rotations = message_no_header[15] / 2.0
+        anem_rotations = message_no_header[13] / 2.0
         time_interval = self.last_wind_time - time.time()
-        wind_speed, wind_dir = self.get_wind(message_no_header[15], message_no_header[17])  # Pass data from pico
+        wind_speed, wind_dir = self.get_wind(message_no_header[13], message_no_header[14])  # Pass data from pico
         data["outHumidity"] = res[2]
         data["pressure"] = res[1]
         data["outTemp"] = res[0]
         # data["soilTemp1"] = self.get_soil_temp()
         data["windSpeed"] = float(wind_speed)
         data["windDir"] = wind_dir
-        data["rain"] = float(self.get_rainfall(message_no_header[13]))
+        data["rain"] = float(get_rainfall(message_no_header[12]))
         data["anemRotations"] = anem_rotations
         data["timeAnemInterval"] = time_interval
         return data

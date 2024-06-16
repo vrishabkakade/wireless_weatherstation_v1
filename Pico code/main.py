@@ -56,14 +56,14 @@ LoRa code got from https://github.com/martynwheeler/u-lora.git
 __author__ = "Vrishab Kakade"
 __contact__ = "vrishabkakade@gmail.com"
 __copyright__ = "Copyright $YEAR, $COMPANY_NAME"
-__credits__ = ["Martyn Wheeler", "Jaganmayi Himamshu"]
+__credits__ = ["Martyn Wheeler", "Jaganmayi Himamshu", "Chris @ BC-Robotics"]
 __date__ = "2024/06/11"
 __deprecated__ = False
 __email__ = "vrishabkakade@gmail.com"
 __license__ = "GPLv3"
 __maintainer__ = "developer"
 __status__ = "Production"
-__version__ = "0.1"
+__version__ = "1"
 
 from time import sleep
 from ulora import LoRa, ModemConfig, SPIConfig
@@ -174,10 +174,12 @@ try:
         
         Format of the data being sent
         Example:
-        [1,       0, 24,                0, 81,                3, 112,                   0, 69,                    
-        0, 66,                   0, 90]
-        [packet#, byte_array, temp_d1,  byte_array, temp_d2,  byte_array, pressure_d1,  byte_array, pressure_d2,  
-        byte_array, humidity_d1, byte_array, humidity_d2]
+        [(1)1,  (2)0, (3)24,    (4)0, (5)81,    (6)3, (7)112,   (8)0, (9)69,    (10)0, (11)66,  (12)0, (13)90,
+        (14)3,  (15)5,  (16)12]]
+        [(1)packet header#,    (2)byte_array, (3)temp_d1,      (4)byte_array, (5)temp_d2,  
+        (6)byte_array, (7)pressure_d1,      (8)byte_array, (9)pressure_d2,      (10)byte_array, (11)humidity_d1, 
+        (12)byte_array, (13)humidity_d2,    (14)rainfall(bucket tips),          (15)windcount (Anemometer rotations), 
+        (16)windDir (Wind vane) ]
         
         Integer is 32 bits (4*8 bits array), so I should really be using 4 array ([1,2,3,4]) for the int values 
         instead of 2 array ([1,2]). But the numbers I use aren't going to be very large, so to save on memory and 
@@ -192,28 +194,30 @@ try:
         humidity_d2 = bme.values[5].to_bytes(2, 'big')
 
         # Rain Gauge
-        # Pin numbers to use and bucket logic got from
+        # Pin numbers and code to use got from
         # https://bc-robotics.com/tutorials/raspberry-pi-pico-weather-station-part-2-micropython/
-        # rainfall = (rainCount * bucketSize) / 10.0
         # Sending only the number of bucket tips as it is easy to send int over LoRa.
         # I will convert the number of bucket tips to cm on the receiver side as weewx will expect it in cm.
-        rainfall = rainCount.to_bytes(2, 'big')
+        # Passing 1 byte is enough as the number won't get > 255 in 2.5 sec loop
+        rainfall = rainCount.to_bytes(1, 'big')
         rainCount = 0  # Setting it back to zero for the next loop
 
-        windcount = windCount.to_bytes(2, 'big')
+        # Anemometer
+        # Passing 1 byte is enough as the number won't get > 255 in 2.5 sec loop
+        windcount = windCount.to_bytes(1, 'big')
         windCount = 0
 
+        # Wind Vane
         windDir = round((windVane.read_u16() / 64) / 4)  # Read A0, convert to 10-bit (0-1023) and further dividing
         # by 4 to get a number < 255 as it is easy to send and decode
-        windDir = windDir.to_bytes(2, 'big')
+        # Passing 1 byte is enough as the number won't get > 255 in 2.5 sec loop
+        winddir = windDir.to_bytes(1, 'big')
 
-        # print (rainfall)
-        # reading = 'Temperature: ' + temp + '. Humidity: ' + humidity + '. Pressure: ' + pressure
-        reading = [temp_d1, temp_d2, pressure_d1, pressure_d2, humidity_d1, humidity_d2, rainfall, windcount, windDir]
+        reading = [temp_d1, temp_d2, pressure_d1, pressure_d2, humidity_d1, humidity_d2, rainfall, windcount, winddir]
 
         lora.send_to_wait(reading, SERVER_ADDRESS)  # Sending the readings
         spLock.release()
-        sleep(2.5)
+        sleep(5)  # Send data every 5 seconds and put the device to sleep to save power
 
 except KeyboardInterrupt:
     terminate = True
