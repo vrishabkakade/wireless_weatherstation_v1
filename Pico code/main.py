@@ -36,12 +36,10 @@ Prerequisites:
 
 	2. This LoRa sender (server) that is sending data in the format
     Example:
-        [(1)1,  (2)0, (3)24,    (4)0, (5)81,    (6)3, (7)112,   (8)0, (9)69,    (10)0, (11)66,  (12)0, (13)90,
-        (14)3,  (15)5,  (16)12]]
-        [(1)packet header#,    (2)byte_array, (3)temp_d1,      (4)byte_array, (5)temp_d2,
-        (6)byte_array, (7)pressure_d1,      (8)byte_array, (9)pressure_d2,      (10)byte_array, (11)humidity_d1,
-        (12)byte_array, (13)humidity_d2,    (14)rainfall(bucket tips),          (15)windcount (Anemometer rotations),
-        (16)windDir (Wind vane) ]
+    [1,       0, 24,                0, 81,                3, 112,                   0, 69,
+    0, 66,                   0, 90]
+    [packet#, byte_array, temp_d1,  byte_array, temp_d2,  byte_array, pressure_d1,  byte_array, pressure_d2,
+    byte_array, humidity_d1, byte_array, humidity_d2]
 
     Integer is 32 bits (4*8-bit array), so I should really be using 4 array ([1,2,3,4]) for the int values instead of 2
      array ([1,2]). But the numbers I use aren't going to be very large, so to save on memory and bandwidth,
@@ -58,7 +56,7 @@ LoRa code got from https://github.com/martynwheeler/u-lora.git
 __author__ = "Vrishab Kakade"
 __contact__ = "vrishabkakade@gmail.com"
 __copyright__ = "Copyright $YEAR, $COMPANY_NAME"
-__credits__ = ["Martyn Wheeler", "Jaganmayi Himamshu", "Chris @ BC-Robotics"]
+__credits__ = ["Martyn Wheeler", "Jaganmayi Himamshu", "Tony DiCola"]
 __date__ = "2024/06/11"
 __deprecated__ = False
 __email__ = "vrishabkakade@gmail.com"
@@ -217,12 +215,16 @@ try:
 
         reading = [temp_d1, temp_d2, pressure_d1, pressure_d2, humidity_d1, humidity_d2, rainfall, windcount, winddir]
 
+        """
+        Readings are sent twice as sometimes junk readings are received on the receiver side. We compare the two
+        readings on the receiver side and if they don't match, we discard the packets
+        """
         lora.send_to_wait(reading, SERVER_ADDRESS)  # Sending the readings
+        lora.send_to_wait(reading, SERVER_ADDRESS)  # Sendinig the readings a second time
         spLock.release()
-        sleep(5)  # Send data every 5 seconds and put the device to sleep to save power
+        sleep(5)
 
 except KeyboardInterrupt:
     terminate = True
     time.sleep(0.3)
     print("Main thread terminated gracefully.")
-

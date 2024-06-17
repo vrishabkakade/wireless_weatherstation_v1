@@ -35,7 +35,7 @@ driver_config = """
     # [REQUIRED]
     # The driver to use.
     driver = user.byows_rpi_lora
-    loop_interval = 2.5
+    loop_interval = 5
 
 
 """

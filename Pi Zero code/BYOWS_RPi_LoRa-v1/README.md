@@ -10,10 +10,10 @@ Distributed under terms of the GPLv3
 
 # Installation
 
-Download the file BYOWS_RPi_LoRa-0.1.zip
+Download the file BYOWS_RPi_LoRa-v1.zip
 
 Run the command
-weectl extension install BYOWS_RPi_LoRa-0.1.zip (or use sudo in case the installation was done as root)
+weectl extension install BYOWS_RPi_LoRa-v1.zip (or use sudo in case the installation was done as root)
 
 Update weewx.conf (usually in /etc/weewx/weewx.conf)
 Change the station type to BYOWS_LORA

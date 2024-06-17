@@ -19,12 +19,17 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+LoRa code Copyright (c) 2022 Chandra Wijaya Sentosa https://github.com/chandrawi/LoRaRF-Python/tree/main
+
+Raspberry Pi Weather Station driver for Weewx got from Jardi A. Martinez Jordan https://github.com/jardiamj/BYOWS_RPi
+
+Customized by Vrishab Kakade to work for the weather station
 """
 
 __author__ = "Vrishab Kakade"
 __contact__ = "vrishabkakade@gmail.com"
 __copyright__ = "Copyright $YEAR, $COMPANY_NAME"
-__credits__ = ["Jardi A. Martinez Jordan", "Jaganmayi Himamshu", "Chris @ BC-Robotics"]
+__credits__ = ["Jardi A. Martinez Jordan", "Jaganmayi Himamshu", "Chris @ BC-Robotics", "Chandra Wijaya Sentosa"]
 __date__ = "2024/06/11"
 __deprecated__ = False
 __email__ = "vrishabkakade@gmail.com"
@@ -38,6 +43,7 @@ import math
 import os
 import sys
 import time
+import numpy as np
 
 import weewx.drivers
 # sys.path.insert(1, '/etc/weewx/bin/user') # Alternate path to place the LoRaRF folder
@@ -50,6 +56,9 @@ DRIVER_VERSION = "1"
 
 # Initialize the logger for this module
 log = logging.getLogger(__name__)
+
+# Setting up the possible range of RSSI values as per local testing and https://lora.readthedocs.io/en/latest/
+RSSI_range = np.arange(-45, -121, -1)
 
 
 def loader(config_dict, _):
@@ -85,7 +94,7 @@ class ByowsRpi(weewx.drivers.AbstractDevice):
         while True:
             packet = {"dateTime": int(time.time() + 0.5), "usUnits": weewx.METRIC}
             data = self.station.get_data()
-            if data != 1:
+            if data is not None:
                 packet.update(data)
                 yield packet
                 time.sleep(self.loop_interval)  # defaults to 5 seconds
@@ -176,6 +185,30 @@ class ByowsRpiStation(object):
         """ Function that returns wind as a vector: speed, direction."""
         return self.get_wind_speed(rotations), read_direction(wind_dir)
 
+    def get_message(self, LoRa):
+        # Request for receiving a new LoRa packet
+        LoRa.request()
+        # Wait for an incoming LoRa packet
+        LoRa.wait()
+
+        # Put a received packet to message and counter variable
+        # read() and available() method must be called after request() or listen() method
+        message = []
+        # available() method return remaining received payload length and
+        # will decrement each read() or get() method called
+        while LoRa.available() > 1:
+            # message += chr(LoRa.read()) # This is used if the data is a string
+            message += [(LoRa.read())]  # Using this as all our data being received is bytes and int
+        counter = [LoRa.read()]  # Read the last byte
+        message += counter  # Append the last byte to the message
+        return message
+
+    def check_message_length(self, message, expected_data_length):
+        if len(message) != expected_data_length + 1:
+            print("Mostly junk data received for the first packet. Skipping this packet")
+            log.debug("Mostly junk data received for the first packet. Skipping this packet")
+            return None
+
     def get_data(self):
         """ Generates data packets every time interval. """
 
@@ -235,34 +268,56 @@ class ByowsRpiStation(object):
 
         # print("\n-- LoRa Receiver --\n")
 
-        # Request for receiving a new LoRa packet
-        LoRa.request()
-        # Wait for an incoming LoRa packet
-        LoRa.wait()
+        ##############################
+        # Receive the first message
+        ##############################
+        message = self.get_message(LoRa)
 
-        # Put a received packet to message and counter variable
-        # read() and available() method must be called after request() or listen() method
-        message = []
-        # available() method return remaining received payload length and
-        # will decrement each read() or get() method called
-        while LoRa.available() > 1:
-            # message += chr(LoRa.read()) # This is used if the data is a string
-            message += [(LoRa.read())]  # Using this as all our data being received is bytes and int
-        counter = [LoRa.read()]  # Read the last byte
-        message += counter  # Append the last byte to the message
+        # If the first packet length is not as expected, skip the entire loop.
+        self.check_message_length(message, expected_data_length)
+
+        # The first message should have an odd number header. If not, skip and don't get the next packet
+        if message[0] % 2 == 0:
+            log.debug("Even number packet for fist message. Skipping")
+            log.debug("Message: %s", message)
+            return None
+
+        ##############################
+        # Receive the second message
+        ##############################
+        # Receive the same packet twice to ensure no junk data is being received.
+        # This will have message[0] + 1 as header number
+        message_check = self.get_message(LoRa)
+
+        # If the second packet length is not as expected, skip the entire loop.
+        self.check_message_length(message_check, expected_data_length)
+
+        # The second message should have an even number header. If not, skip and don't get the next packet
+        if message_check[0] % 2 != 0:
+            log.debug("Odd number packet for second message. Skipping")
+            log.debug("Message: %s", message_check)
+            return None
 
         """ Packet structure
         Example:
         [(1)1,  (2)0, (3)24,    (4)0, (5)81,    (6)3, (7)112,   (8)0, (9)69,    (10)0, (11)66,  (12)0, (13)90,
         (14)3,  (15)5,  (16)12]]
-        [(1)packet header#,    (2)byte_array, (3)temp_d1,      (4)byte_array, (5)temp_d2,  
-        (6)byte_array, (7)pressure_d1,      (8)byte_array, (9)pressure_d2,      (10)byte_array, (11)humidity_d1, 
-        (12)byte_array, (13)humidity_d2,    (14)rainfall(bucket tips),          (15)windcount (Anemometer rotations), 
+        [(1)packet header#,    (2)byte_array, (3)temp_d1,      (4)byte_array, (5)temp_d2,
+        (6)byte_array, (7)pressure_d1,      (8)byte_array, (9)pressure_d2,      (10)byte_array, (11)humidity_d1,
+        (12)byte_array, (13)humidity_d2,    (14)rainfall(bucket tips),          (15)windcount (Anemometer rotations),
         (16)windDir (Wind vane) ]
         """
 
         # Print packet/signal status including RSSI, SNR, and signalRSSI
         print("Packet status: RSSI = {0:0.2f} dBm | SNR = {1:0.2f} dB".format(LoRa.packetRssi(), LoRa.snr()))
+        log.debug("Packet status: RSSI = {0:0.2f} dBm | SNR = {1:0.2f} dB".format(LoRa.packetRssi(), LoRa.snr()))
+
+        # Get the signal strength to store in the database
+        # to Get the percentage relative to the values stored in RSSI_range
+        # https://stackoverflow.com/questions/53822430/percentage-of-array-between-values
+        RSSI = [LoRa.packetRssi()]
+        freq = np.histogram(RSSI_range, bins=[-np.inf] + RSSI + [np.inf])[0] / RSSI_range.size
+        signal_strength = freq[0] * 100  # Convert to percentage
 
         """
         ==================
@@ -275,12 +330,31 @@ class ByowsRpiStation(object):
         It is used to see what packets have been dropped
         """
         message_no_header = message[1:]
+        message_no_header_check = message_check[1:]
+
+        # Debugging - Writing to file to see the raw data being received
+        with open("output.log", "a") as debug_log_file:
+            print("Raw message received:", message, file=debug_log_file)
+            print("Raw message check received:", message_check, file=debug_log_file)
+        log.debug("Raw message received: %s", message)
+        log.debug("Raw message check received: %s", message_check)
+
+        # Check to make sure both packets received are same. If not discard them.
+        # The check message should be the next consecutive package
+        if message_check[0] != message[0] + 1:
+            log.debug("Check message is not the next one after message. Skipping")
+            return None
+        if message_no_header != message_no_header_check:
+            print("Packets don't match. Skipping this packet")
+            log.debug("Packets don't match. Skipping this packet")
+            return None
 
         # Check against the expected packet size
         # If the packet size (message) is not as expected, skip processing this packet
         if len(message_no_header) != expected_data_length:
             print("Mostly junk data received. Skipping this packet")
-            return 1
+            log.debug("Mostly junk data received. Skipping this packet")
+            return None
 
         # Get 2 elements at a time to decode the value to int from 2 int arrays
         # lg = len(message_no_header) # Skipping the rain,
@@ -297,10 +371,9 @@ class ByowsRpiStation(object):
             decoded_tup += [int.from_bytes(tup, byteorder='big', signed=True)]
 
         # Debugging - Writing to file to see where Index out of range error is occurring
-        # This is useful if you start weewx through the command line as sudo weewxd
-        # with open("output.log", "a") as debug_log_file:
-        #    print("Undecoded:", message_no_header, file=debug_log_file)
-        #    print("Decoded tup:", decoded_tup, file=debug_log_file)
+        with open("output.log", "a") as debug_log_file:
+            print("Undecoded:", message_no_header, file=debug_log_file)
+            print("Decoded tup:", decoded_tup, file=debug_log_file)
         log.debug("Undecoded: %s", message_no_header)
         log.debug("Decoded tup: %s", decoded_tup)
 
@@ -320,7 +393,8 @@ class ByowsRpiStation(object):
         # To avoid index out of range error, doing an additional check
         if len(float_value) != 3:
             print("Something went wrong in processing the packet. Skipping this packet")
-            return 1
+            log.debug("Something went wrong in processing the packet. Skipping this packet")
+            return None
 
         # Sometimes junk data is sent in packets, and this might lead to negative numbers after the decimal point.
         # To avoid the program from stopping, I use the try except block to continue even if the data is incorrect
@@ -329,63 +403,22 @@ class ByowsRpiStation(object):
             res = [float(ele) for ele in float_value]
             print(message[0], "Temperature: ", res[0], "C", "Pressure: ", res[1], "hPa", "Humidity :", res[2], "%",
                   "Bucket Tips: ", message_no_header[12], "Wind rotations", message_no_header[13],
-                  "Wind Direction:", message_no_header[14])
+                  "Wind Direction:", message_no_header[14], "Signal Strength:", round(signal_strength))
             log.debug("Temperature: %s, Pressure: %s, Humidity: %s, Bucket Tips: %s, Wind rotations:%s, "
-                      "Wind Direction: %s  ", res[0], res[1], res[2], message_no_header[12],
-                      message_no_header[13], message_no_header[14])
+                      "Wind Direction: %s, Signal Strength: %s  ", res[0], res[1], res[2], message_no_header[12],
+                      message_no_header[13], message_no_header[14], round(signal_strength))
 
             # Debugging - Writing to file to see where Index out of range error is occurring
-            # This is useful if you start weewx through the command line as sudo weewxd
-            # with open("output.log", "a") as debug_log_file:
-            #    print(message[0], "Temperature: ", res[0], "C", "Pressure: ", res[1], "hPa", "Humidity :", res[2], "%",
-            #          "Bucket Tips: ", message_no_header[12], "Wind rotations", message_no_header[13],
-            #          "Wind Direction:", message_no_header[14], "len(float_value)", len(float_value),
-            #          file=debug_log_file)
+            with open("output.log", "a") as debug_log_file:
+                print(message[0], "Temperature: ", res[0], "C", "Pressure: ", res[1], "hPa", "Humidity :", res[2], "%",
+                      "Bucket Tips: ", message_no_header[12], "Wind rotations", message_no_header[13],
+                      "Wind Direction:", message_no_header[14], "len(float_value)", len(float_value),
+                      file=debug_log_file)
 
         except Exception as exc:
             print('[!!!] {err}'.format(err=exc))
-            return 1  # This will avoid weewx exiting with index out of range error due to junk data being received
-
-        """ Details of issue with junk data being received. Weewx exits due to this
-        Jun 16 20:40:03 sandboxpizero weewxd[27367]: DEBUG user.byows_rpi_lora: Undecoded: [0, 25, 0, 55, 3, 111, 0, 91, 0, 59, 0, 35, 0, 0, 95]
-        Jun 16 20:40:03 sandboxpizero weewxd[27367]: DEBUG user.byows_rpi_lora: Decoded tup: [25, 55, 879, 91, 59, 35]
-        Jun 16 20:40:03 sandboxpizero weewxd[27367]: DEBUG user.byows_rpi_lora: Temperature: 25.55, Pressure: 879.91, Humidity: 59.35, Bucket Tips: 0, Wind rotations:0, Wind Direction: 95
-        Jun 16 20:40:08 sandboxpizero weewxd[27367]: DEBUG user.byows_rpi_lora: Undecoded: [237, 86, 48, 100, 213, 43, 217, 75, 26, 99, 56, 253, 126, 18, 185]
-        Jun 16 20:40:08 sandboxpizero weewxd[27367]: DEBUG user.byows_rpi_lora: Decoded tup: [-4778, 12388, -10965, -9909, 6755, 14589]
-        Jun 16 20:40:08 sandboxpizero weewxd[27367]: DEBUG user.byows_rpi_lora: Unknown Wind Vane value: 740
-        Jun 16 20:40:08 sandboxpizero weewxd[27367]: INFO weewx.engine: Main loop exiting. Shutting engine down.
-        Jun 16 20:40:08 sandboxpizero weewxd[27367]: INFO weewx.engine: Shutting down StdReport thread
-        Jun 16 20:40:08 sandboxpizero weewxd[27367]: DEBUG weewx.engine: StdReport thread has been terminated
-        Jun 16 20:40:08 sandboxpizero weewxd[27367]: CRITICAL __main__: Caught unrecoverable exception:
-        Jun 16 20:40:08 sandboxpizero weewxd[27367]: CRITICAL __main__:     ****  list index out of range
-        Jun 16 20:40:08 sandboxpizero weewxd[27367]: CRITICAL __main__:     ****  Traceback (most recent call last):
-        Jun 16 20:40:08 sandboxpizero weewxd[27367]: CRITICAL __main__:     ****    File "/usr/share/weewx/weewxd.py", line 166, in main
-        Jun 16 20:40:08 sandboxpizero weewxd[27367]: CRITICAL __main__:     ****      engine.run()
-        Jun 16 20:40:08 sandboxpizero weewxd[27367]: CRITICAL __main__:     ****    File "/usr/share/weewx/weewx/engine.py", line 204, in run
-        Jun 16 20:40:08 sandboxpizero weewxd[27367]: CRITICAL __main__:     ****      for packet in self.console.genLoopPackets():
-        Jun 16 20:40:08 sandboxpizero weewxd[27367]: CRITICAL __main__:     ****    File "/etc/weewx/bin/user/byows_rpi_lora.py", line 87, in genLoopPackets
-        Jun 16 20:40:08 sandboxpizero weewxd[27367]: CRITICAL __main__:     ****      data = self.station.get_data()
-        Jun 16 20:40:08 sandboxpizero weewxd[27367]: CRITICAL __main__:     ****             ^^^^^^^^^^^^^^^^^^^^^^^
-        Jun 16 20:40:08 sandboxpizero weewxd[27367]: CRITICAL __main__:     ****    File "/etc/weewx/bin/user/byows_rpi_lora.py", line 357, in get_data
-        Jun 16 20:40:08 sandboxpizero weewxd[27367]: CRITICAL __main__:     ****      data["outHumidity"] = res[2]
-        Jun 16 20:40:08 sandboxpizero weewxd[27367]: CRITICAL __main__:     ****                            ~~~^^^
-        Jun 16 20:40:08 sandboxpizero weewxd[27367]: CRITICAL __main__:     ****  IndexError: list index out of range
-        Jun 16 20:40:08 sandboxpizero weewxd[27367]: CRITICAL __main__:     ****  Exiting.
-        Jun 16 20:40:08 sandboxpizero weewxd[27367]: Traceback (most recent call last):
-        Jun 16 20:40:08 sandboxpizero weewxd[27367]:   File "/usr/share/weewx/weewxd.py", line 265, in <module>
-        Jun 16 20:40:08 sandboxpizero weewxd[27367]:     main()
-        Jun 16 20:40:08 sandboxpizero weewxd[27367]:   File "/usr/share/weewx/weewxd.py", line 166, in main
-        Jun 16 20:40:08 sandboxpizero weewxd[27367]:     engine.run()
-        Jun 16 20:40:08 sandboxpizero weewxd[27367]:   File "/usr/share/weewx/weewx/engine.py", line 204, in run
-        Jun 16 20:40:08 sandboxpizero weewxd[27367]:     for packet in self.console.genLoopPackets():
-        Jun 16 20:40:08 sandboxpizero weewxd[27367]:   File "/etc/weewx/bin/user/byows_rpi_lora.py", line 87, in genLoopPackets
-        Jun 16 20:40:08 sandboxpizero weewxd[27367]:     data = self.station.get_data()
-        Jun 16 20:40:08 sandboxpizero weewxd[27367]:            ^^^^^^^^^^^^^^^^^^^^^^^
-        Jun 16 20:40:08 sandboxpizero weewxd[27367]:   File "/etc/weewx/bin/user/byows_rpi_lora.py", line 357, in get_data
-        Jun 16 20:40:08 sandboxpizero weewxd[27367]:     data["outHumidity"] = res[2]
-        Jun 16 20:40:08 sandboxpizero weewxd[27367]:                           ~~~^^^
-        Jun 16 20:40:08 sandboxpizero weewxd[27367]: IndexError: list index out of range
-        """
+            log.debug("Error: %s", '[!!!] {err}'.format(err=exc))
+            return None
 
         # Show received status in case CRC or header error occur
         status = LoRa.status()
@@ -407,4 +440,5 @@ class ByowsRpiStation(object):
         data["rain"] = float(get_rainfall(message_no_header[12]))
         data["anemRotations"] = anem_rotations
         data["timeAnemInterval"] = time_interval
+        data["rxCheckPercent"] = signal_strength
         return data
