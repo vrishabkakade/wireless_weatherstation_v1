@@ -1,3 +1,8 @@
+# Project Overview
+This project provides a comprehensive guide to building a personalized, wireless weather station using a **Raspberry Pi Pico W** and a **Raspberry Pi Zero 2 W**. The guide details the necessary hardware and software, including connections for sensors measuring temperature, humidity, barometric pressure, wind speed and direction, and rainfall. It explains how to set up the Raspberry Pi Pico W as a data sender and the Raspberry Pi Zero 2 W as a receiver using [**LoRa**](https://en.wikipedia.org/wiki/LoRa) to wirelessly send/receive data. [**Weewx**](https://weewx.com/) then processes, stores and displays the data. The guide also includes optional steps for advanced features such as setting up a virtual private server to publish real-time weather data online, configuring an Android app for remote monitoring, and backing up the system.
+
+This project is inspired by [**Raspberry Pi's Personal Weather Station**](https://projects.raspberrypi.org/en/projects/build-your-own-weather-station/0)
+ 
 ## Table of Contents
 
 * [📝Document Control](#document-control)
