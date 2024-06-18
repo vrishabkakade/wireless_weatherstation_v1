@@ -1130,7 +1130,9 @@ Restart Apache to implement your changes:
 [weewx@cloud009 \~]\$ sudo systemctl restart apache2
 
 ```
-### 🗃️[Step 6 – Getting Familiar with Important Apache Files and Directories](https://www.digitalocean.com/community/tutorials/how-to-install-the-apache-web-server-on-ubuntu-22-04#step-6-getting-familiar-with-important-apache-files-and-directories)
+### 🗃️Step 6 – Getting Familiar with Important Apache Files and Directories
+
+[Source: Digital Ocean](https://www.digitalocean.com/community/tutorials/how-to-install-the-apache-web-server-on-ubuntu-22-04#step-6-getting-familiar-with-important-apache-files-and-directories)
 
 Now that you know how to manage the Apache service itself, you should take a few minutes to familiarize yourself with a few important directories and files.
 
@@ -1362,7 +1364,9 @@ To obtain an SSL certificate with Let’s Encrypt, you need to install the Certb
 ```
 Certbot is now installed on your server. In the next step, you’ll verify Apache’s configuration to make sure your virtual host is set appropriately. This will ensure that the certbot client script will be able to detect your domains and reconfigure your web server to use your newly generated SSL certificate automatically.
 
-### 🖥️[Step 2 — Checking your Apache Virtual Host Configuration](https://www.digitalocean.com/community/tutorials/how-to-secure-apache-with-let-s-encrypt-on-ubuntu#step-2-checking-your-apache-virtual-host-configuration)
+### 🖥️Step 2 — Checking your Apache Virtual Host Configuration
+
+[Source: DIgital Ocean](https://www.digitalocean.com/community/tutorials/how-to-secure-apache-with-let-s-encrypt-on-ubuntu#step-2-checking-your-apache-virtual-host-configuration)
 
 To automatically obtain and configure SSL for your web server, Certbot needs to find the correct virtual host within your Apache configuration files. Your server domain name(s) will be retrieved from the ServerName and ServerAlias directives defined within your VirtualHost configuration block.
 
