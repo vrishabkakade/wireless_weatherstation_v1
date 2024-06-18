@@ -82,7 +82,7 @@
 |---------------|-------------|----------------------------------------------------------------------------|
 | June 16, 2024 | 1           | Initial build - The breadboard version that is used for a proof of concept |
 
-## 🔭Images
+# 🔭Images
 
 ![](media/f8699b2693327e0e36fa073707e493f7.jpeg)![](media/c00aa9a29781a1ecb6856bb5e9e956d3.jpeg)
 
@@ -100,6 +100,7 @@ Full Desktop Site
 # 📇 Introduction
 
 Links for this project:
+
 [Working demo of weather station data being displayed in real-time](https://bettaforecast.in)
 
 [vrishabkakade/wireless_weatherstation_v1: This repository contains all the code for the weather station (github.com)](https://github.com/vrishabkakade/wireless_weatherstation_v1)
@@ -310,7 +311,7 @@ There’s an issue where the processes can hang and run out of memory as the RAM
 ```
 weewx@bettaforecastpi:\~ \$ sudo vi /etc/dphys-swapfile
 ```
-change CONF_SWAPSIZE=100 to 1024
+  > change CONF_SWAPSIZE=100 to 1024
 
 Reboot for the changes to take effect.
 ```
@@ -364,26 +365,26 @@ weewx@bettaforecastpi:\~/weather-station \$ sudo apt install python3-pip
 weewx@bettaforecastpi:\~/weather-station \$ pip --version
 
 ```
-pip 23.0.1 from /usr/**lib**/**python3**/**dist**-**packages**/**pip** (**python** 3.11)
+  > pip 23.0.1 from /usr/**lib**/**python3**/**dist**-**packages**/**pip** (**python** 3.11)
 
 We get the below error when we try to install anything with pip.
 
-error: externally-managed-environment  
-  
-× This environment **is** externally managed  
-╰─\> **To** install Python packages **system**-wide, try apt install  
- python3-xyz, **where** xyz **is** the package you are trying **to**  
- install.  
-  
- **If** you wish **to** install a non-Debian-packaged Python package,  
- **create** a virtual environment **using** python3 -m venv path/**to**/venv.  
- **Then** use path/**to**/venv/bin/python **and** path/**to**/venv/bin/pip. Make  
- sure you have python3-**full** installed.  
-  
- **For** more information visit http://rptl.io/venv  
-  
-note: **If** you believe this **is** a mistake, please contact your Python installation **or** OS distribution provider. You can override this, at the risk **of** breaking your Python installation **or** OS, **by** **passing** --break-system-packages.  
-hint: See PEP 668 **for** the detailed specification.
+> error: externally-managed-environment  
+>  
+> × This environment **is** externally managed  
+> ╰─\> **To** install Python packages **system**-wide, try apt install  
+> python3-xyz, **where** xyz **is** the package you are trying **to**  
+>  install.  
+>   
+>  **If** you wish **to** install a non-Debian-packaged Python package,  
+>  **create** a virtual environment **using** python3 -m venv path/**to**/venv.  
+>  **Then** use path/**to**/venv/bin/python **and** path/**to**/venv/bin/pip. Make  
+>  sure you have python3-**full** installed.  
+>   
+>  **For** more information visit http://rptl.io/venv  
+>   
+> note: **If** you believe this **is** a mistake, please contact your Python installation **or** OS distribution provider. You can > override this, at the risk **of** breaking your Python installation **or** OS, **by** **passing** --break-system-packages.  
+> hint: See PEP 668 **for** the detailed specification.
 
 Solution: https://www.makeuseof.com/fix-pip-error-externally-managed-environment-linux/
 
@@ -541,13 +542,14 @@ I have modified the BYOWS_RPI driver to include LoRa communication.
 download the latest release from GitHub into your WeeWx directory
 
 Path: https://github.com/vrishabkakade/wireless_weatherstation_v1/blob/0f4f853722ce6556a7ca550df5c1a6cfaac60785/Pi%20Zero%20code/BYOWS_RPi_LoRa-v1.zip
-
+```
 wget https://github.com/vrishabkakade/wireless_weatherstation_v1/blob/0f4f853722ce6556a7ca550df5c1a6cfaac60785/Pi%20Zero%20code/BYOWS_RPi_LoRa-v1.zip
+```
 
 Once it is downloaded, run the WeeWX Extension installer. This will install the driver and add the default configuration items to your WeeWX.conf file
-
+```
 sudo weectl extension BYOWS_RPi_LoRa-v1.zip
-
+```
 #### 🛠️ Configuration
 
 To enable the byows_rpi_lora driver modify the weewx.conf file and change the "station_type" variable to "BYOWS_LORA" in the "[Station]" section. Configure the driver by looking for the BYOWS stanza at the end of the file.
@@ -562,11 +564,11 @@ The driver automatically adds the below parameters.
 
 The sender sends the data every 5 seconds to conserve power. This collection frequency can be altered on the Pico side by changing the sleep to the required time.
 
-[**BYOWS_LORA]  
-** \# [REQUIRED]  
- \# The driver to use.  
- driver = user.**byows_rpi_lora  
-** loop_interval = 5
+> [**BYOWS_LORA]  
+> ** \# [REQUIRED]  
+>  \# The driver to use.  
+>  driver = user.**byows_rpi_lora  
+> ** loop_interval = 5
 
 Install numpy as the signal strength calculation uses it.
 
@@ -587,9 +589,9 @@ weewx@bettaforecastpi:/etc/weewx/bin/user \$ sudo vi /lib/systemd/system/weewx.s
 
 ```
 
-Comment  
-\#User=weewx  
-\#Group=weewx
+  > Comment  
+  > \#User=weewx  
+  > \#Group=weewx
 
 Reload the service and check the status.
 
@@ -631,7 +633,7 @@ root@cloud009:\~\# useradd weewx
 root@cloud009:\~\# id weewx
 
 ```
-uid=1000(**weewx**) gid=1000(**weewx**) groups=1000(**weewx**)
+  > uid=1000(**weewx**) gid=1000(**weewx**) groups=1000(**weewx**)
 
 Create user password
 
@@ -639,9 +641,9 @@ Create user password
 root@cloud009:\~\# passwd weewx
 
 ```
-New password:  
-Retype **new** password:  
-passwd: password updated successfully
+  > New password:  
+  > Retype **new** password:  
+  > passwd: password updated successfully
 
 Since -m option wasn’t passed when creating the user, run the below command to add home directory for the weewx user
 
@@ -655,39 +657,38 @@ root@cloud009:\~\# mkhomedir_helper weewx
 \$ echo \$SHELL
 
 ```
-/bin/sh
+  > /bin/sh
 
 ```
 \$ cat /etc/shells
-
-\# /etc/shells: valid login shells
-
 ```
-/bin/sh  
-/bin/bash  
-/usr/bin/bash  
-/bin/rbash  
-/usr/bin/rbash  
-/usr/bin/sh  
-/bin/dash  
-/usr/bin/dash  
-/usr/bin/tmux  
-/usr/bin/screen
+  > \# /etc/shells: valid login shells
+  > 
+  > /bin/sh  
+  > /bin/bash  
+  > /usr/bin/bash  
+  > /bin/rbash  
+  > /usr/bin/rbash  
+  > /usr/bin/sh  
+  > /bin/dash  
+  > /usr/bin/dash  
+  > /usr/bin/tmux  
+  > /usr/bin/screen
 
 ```
 \$ chsh
 
 ```
-Password:  
-Changing the login shell **for** weewx  
-Enter the new value, **or** press ENTER **for** the default  
- Login Shell [/bin/sh]: /bin/bash
+  > Password:  
+  > Changing the login shell **for** weewx  
+  > Enter the new value, **or** press ENTER **for** the default  
+  > Login Shell [/bin/sh]: /bin/bash
 
 ```
 \$ echo \$SHELL
 
 ```
-/bin/sh
+  > /bin/sh
 
 ### 🔳 CHANGE SHELL COLOR FOR WEEWX TO GREEN
 
@@ -700,8 +701,8 @@ weewx@cloud009:\~\$ vi .bashrc
 ```
 Add the below
 
-export PS1="\\e[0;31m[\\u@\\h \\w]\\\$ \\e[m"  
-source \~/.bashrc
+  > export PS1="\\e[0;31m[\\u@\\h \\w]\\\$ \\e[m"  
+  > source \~/.bashrc
 
 ### 🔳 CHANGE SHELL COLOR FOR ROOT TO RED
 
@@ -712,8 +713,8 @@ root@cloud009:\~\# vi .bashrc
 ```
 Add the below
 
-export PS1="\\e[0;32m[\\u@\\h \\w]\\\$ \\e[m"  
-source \~/.bashrc
+  > export PS1="\\e[0;32m[\\u@\\h \\w]\\\$ \\e[m"  
+  > source \~/.bashrc
 
 Here is a reference of all the colour codes that can be used.
 
@@ -783,10 +784,10 @@ Test logging in![](media/bae73eeb903768ce8cb507505bf78025.png)
 ### 🦾Add weewx to sudo
 
 Source: [How To Create A New Sudo Enabled User on Ubuntu \| DigitalOcean](https://www.digitalocean.com/community/tutorials/how-to-create-a-new-sudo-enabled-user-on-ubuntu)
-
+```
 [weewx@cloud009 \~]\$ groups
-
-**weewx**
+```
+  > **weewx**
 
 ```
 root@cloud009:\~\# usermod -aG sudo weewx
@@ -794,14 +795,14 @@ root@cloud009:\~\# usermod -aG sudo weewx
 root@cloud009:\~\# su - weewx
 
 ```
-To run **a** command as administrator (user "root"), use "sudo \<command\>".  
-See "man sudo_root" **for** **details**.
+  > To run **a** command as administrator (user "root"), use "sudo \<command\>".  
+  > See "man sudo_root" **for** **details**.
 
 ```
 [weewx@cloud009 \~]\$ groups
 
 ```
-**weewx sudo**
+  > **weewx sudo**
 
 ## 🕸️Install Apache Web Server
 
@@ -831,11 +832,11 @@ List the ufw application profiles by running the following:
 [weewx@cloud009 \~]\$ sudo ufw app list
 
 ```
-Available applications:  
- Apache  
- Apache Full  
- Apache Secure  
- OpenSSH
+  > Available applications:  
+  >  Apache  
+  >  Apache Full  
+  >  Apache Secure  
+  >  OpenSSH
 
 As indicated by the output, there are three profiles available for Apache:
 
@@ -849,16 +850,16 @@ Allow on HTTP and HTTPS
 [weewx@cloud009 \~]\$ sudo ufw allow 'Apache Full'
 
 ```
-Rules updated  
-Rules updated (**v6**)
-
-Firewall isn’t active
+  > Rules updated  
+  > Rules updated (**v6**)
+  > 
+  > Firewall isn’t active
 
 ```
 [weewx@cloud009 \~]\$ sudo ufw status
 
 ```
-Status: inactive
+  > Status: inactive
 
 ### 🖥️[Step 3 — Checking your Web Server](https://www.digitalocean.com/community/tutorials/how-to-install-the-apache-web-server-on-ubuntu-22-04#step-3-checking-your-web-server)
 
@@ -870,24 +871,24 @@ Make sure the service is active by running the command for the systemd init syst
 [weewx@cloud009 \~]\$ sudo systemctl status apache2
 
 ```
-● apache2.service - The Apache HTTP Server  
- Loaded: loaded (/lib/systemd/system/apache2.service; enabled; vendor preset: enabled)  
- Active: active (running) since Fri 2024-04-12 06:06:06 UTC; 3min 12s ago  
- Docs: https://httpd.apache.org/docs/2.4/  
- Main PID: 9806 (apache2)  
- Tasks: 55 (limit: 2220)  
- Memory: 5.0M  
- CPU: 59ms  
- CGroup: /system.slice/apache2.service  
- ├─9806 /usr/sbin/apache2 -k start  
- ├─9807 /usr/sbin/apache2 -k start  
- └─9808 /usr/sbin/apache2 -k start  
-  
-Apr 12 06:06:06 cloud009.annaiservers.com systemd[1]: Starting The Apache HTTP Server...  
-Apr 12 06:06:06 cloud009.annaiservers.com apachectl[9805]: AH00558: apache2: Could **not** reliably determine the server's fully qualified domain name, using cloud009.annaiservers.\>  
-Apr 12 06:06:06 cloud009.annaiservers.com systemd[1]: Started The Apache HTTP Server.
+  > ● apache2.service - The Apache HTTP Server  
+  >  Loaded: loaded (/lib/systemd/system/apache2.service; enabled; vendor preset: enabled)  
+  >  Active: active (running) since Fri 2024-04-12 06:06:06 UTC; 3min 12s ago  
+  >  Docs: https://httpd.apache.org/docs/2.4/  
+  >  Main PID: 9806 (apache2)  
+  >  Tasks: 55 (limit: 2220)  
+  >  Memory: 5.0M  
+  > CPU: 59ms  
+  >  CGroup: /system.slice/apache2.service  
+  >  ├─9806 /usr/sbin/apache2 -k start  
+  >  ├─9807 /usr/sbin/apache2 -k start  
+  >  └─9808 /usr/sbin/apache2 -k start  
+  >   
+  > Apr 12 06:06:06 cloud009.annaiservers.com systemd[1]: Starting The Apache HTTP Server...  
+  > Apr 12 06:06:06 cloud009.annaiservers.com apachectl[9805]: AH00558: apache2: Could **not** reliably determine the server's fully qualified domain name, using cloud009.annaiservers.\>  
+  > Apr 12 06:06:06 cloud009.annaiservers.com systemd[1]: Started The Apache HTTP Server.
 
-Test the page <http://142.171.13.19>
+Test the page <http://YOUR_IP>
 
 ![](media/b99f7408acc870be305af1c9b94d9d41.png)
 
@@ -966,6 +967,7 @@ Next, create a sample index.html page
 [weewx@cloud009 \~]\$ sudo vi /var/www/bettaforecast/index.html
 
 ```
+```html
 \<**html**\>  
  \<**head**\>  
  \<**title**\>Welcome to Betta Forecast!\</**title**\>  
@@ -974,13 +976,14 @@ Next, create a sample index.html page
  \<**h1**\>Success! The bettaforecast virtual host is working!\</**h1**\>  
  \</**body**\>  
 \</**html**\>
-
+```
 In order for Apache to serve this content, it’s necessary to create a virtual host file with the correct directives. Instead of modifying the default configuration file located at /etc/apache2/sites-available/000-default.conf directly, make a new one at /etc/apache2/sites-available/bettaforecast.conf:
 
 ```
 [weewx@cloud009 \~]\$ sudo vi /etc/apache2/sites-available/bettaforecast.conf
 
 ```
+```html
 \<VirtualHost \*:80\>  
  ServerAdmin vrishabkakade@gmail.com  
  ServerName bettaforecast.in  
@@ -989,6 +992,7 @@ In order for Apache to serve this content, it’s necessary to create a virtual 
  ErrorLog \${APACHE_LOG_DIR}/error.log  
  CustomLog \${APACHE_LOG_DIR}/access.log combined  
 \</VirtualHost\>
+```
 
 Notice that we’ve updated the DocumentRoot to our new directory and ServerAdmin to an email that the **bettaforecast** site administrator can access. We’ve also added two directives: ServerName, which establishes the base domain that will match this virtual host definition, and ServerAlias, which defines further names that will match as if they were the base name.
 
@@ -1000,9 +1004,9 @@ Now enable the file with the a2ensite tool:
 [weewx@cloud009 \~]\$ sudo a2ensite bettaforecbettaforecast.conf
 
 ```
-Enabling site bettaforecast.  
-**To** activate the **new** **configuration**, you need **to** run:  
- systemctl reload apache2
+  > Enabling site bettaforecast.  
+  > **To** activate the **new** **configuration**, you need **to** run:  
+  > systemctl reload apache2
 
 Disable the default site defined in 000-default.conf:
 
@@ -1010,9 +1014,9 @@ Disable the default site defined in 000-default.conf:
 [weewx@cloud009 \~]\$ sudo a2dissite 000-default.conf
 
 ```
-Site 000-**default** disabled.  
-**To** activate the **new** **configuration**, you need **to** run:  
- systemctl reload apache2
+  > Site 000-**default** disabled.  
+  > **To** activate the **new** **configuration**, you need **to** run:  
+  > systemctl reload apache2
 
 Next, test for configuration errors:
 
@@ -1020,8 +1024,8 @@ Next, test for configuration errors:
 [weewx@cloud009 \~]\$ sudo apache2ctl configtest
 
 ```
-AH00558: apache2: Could **not** reliably determine the server's fully qualified domain name, using cloud009.annaiservers.com. Set the 'ServerName' directive globally to suppress this message  
-Syntax OK
+  > AH00558: apache2: Could **not** reliably determine the server's fully qualified domain name, using cloud009.annaiservers.com. Set the 'ServerName' directive globally to suppress this message  
+  > Syntax OK
 
 Restart Apache to implement your changes:
 
@@ -1106,17 +1110,17 @@ root@freedompi:/home/vrishabkakade/.ssh*\# cd \~*
 root@freedompi:\~\# ls -lrat
 
 ```
-total 40  
-\-rw-r--r-- 1 root root 161 Jul 9 2019 .profile  
-\-rw-r--r-- 1 root root 571 Apr 11 2021 .bashrc  
-drwx------ 2 root root 4096 Mar 15 20:29 .ssh  
-drwx------ 3 root root 4096 Mar 15 20:47 .vnc  
-drwx------ 3 root root 4096 Apr 1 19:20 .cache  
-\-rw------- 1 root root 2143 Apr 4 21:01 .mysql_history  
-\-rw-r--r-- 1 root root 180 Apr 5 18:42 .wget-hsts  
-drwxr-xr-x 18 root root 4096 Apr 9 20:48 ..  
-\-rw------- 1 root root 20 Apr 9 20:48 .lesshst  
-drwx------ 5 root root 4096 Apr 9 20:48 .
+  > total 40  
+  > \-rw-r--r-- 1 root root 161 Jul 9 2019 .profile  
+  > \-rw-r--r-- 1 root root 571 Apr 11 2021 .bashrc  
+  > drwx------ 2 root root 4096 Mar 15 20:29 .ssh  
+  > drwx------ 3 root root 4096 Mar 15 20:47 .vnc  
+  > drwx------ 3 root root 4096 Apr 1 19:20 .cache  
+  > \-rw------- 1 root root 2143 Apr 4 21:01 .mysql_history  
+  > \-rw-r--r-- 1 root root 180 Apr 5 18:42 .wget-hsts  
+  > drwxr-xr-x 18 root root 4096 Apr 9 20:48 ..  
+  > \-rw------- 1 root root 20 Apr 9 20:48 .lesshst  
+  > drwx------ 5 root root 4096 Apr 9 20:48 .
 
 ```
 root@freedompi:\~\# cd .ssh
@@ -1124,10 +1128,10 @@ root@freedompi:\~\# cd .ssh
 root@freedompi:\~/.ssh*\# vi config*
 
 ```
-Host bettaforecat.**in**  
- HostName bettaforecast.**in**  
- User weewx  
- IdentityFile \~/.ssh/id_rsa
+  > Host bettaforecat.**in**  
+  >  HostName bettaforecast.**in**  
+  >  User weewx  
+  >  IdentityFile \~/.ssh/id_rsa
 
 ```
 root@freedompi:\~/.ssh\# chmod 600 \~/.ssh/config
@@ -1135,12 +1139,12 @@ root@freedompi:\~/.ssh\# chmod 600 \~/.ssh/config
 root@freedompi:\~/.ssh*\# ssh-keygen*
 
 ```
-Generating public/private rsa key pair.  
-Enter file in which to save the key (/root/.ssh/id_rsa):   
-Enter passphrase (empty for no passphrase):   
-Enter same passphrase again:   
-Your identification has been saved in /root/.ssh/id_rsa  
-Your public key has been saved in /root/.ssh/id_rsa.pub
+  > Generating public/private rsa key pair.  
+  > Enter file in which to save the key (/root/.ssh/id_rsa):   
+  > Enter passphrase (empty for no passphrase):   
+  > Enter same passphrase again:   
+  > Your identification has been saved in /root/.ssh/id_rsa  
+  > Your public key has been saved in /root/.ssh/id_rsa.pub
 
 Login to bettaforecast.in
 
@@ -1168,36 +1172,36 @@ vrishabkakade@freedompi:/etc/weewx \$ cp weewx.conf weewx.conf.\`date +%Y%m%d\`
 ```
 Under [StdReport]  
   
- [[RSYNC]]  
- \# rsync'ing to a webserver is treated as just another report.  
- skin = Rsync  
-  
- \# If you wish to use rsync, you must configure passwordless ssh using  
- \# public/private key authentication from the user account that weewx  
- \# runs to the user account on the remote machine where the files  
- \# will be copied.  
- \#  
- \# If you wish to use rsync, set "enable" to "true", then  
- \# fill out server, user, and path.  
- \# The server should appear in your .ssh/config file.  
- \# The user is the username used in the identity file.  
- \# The path is the destination directory, such as /var/www/html/weather.  
- \# Be sure that the user has write permissions on the destination!  
- enable = true  
- server = bettaforecast.**in**  
- user = weewx  
- path = /var/www/bettaforecast  
-  
- \# To upload files from something other than what HTML_ROOT is set  
- \# to above, specify a different HTML_ROOT here.  
- \#HTML_ROOT = /var/www/html/weewx  
-  
- \# Rsync can be configured to remove files from the remote server if  
- \# they don't exist under HTML_ROOT locally. USE WITH CAUTION: if you  
- \# make a mistake in the remote path, you could could unintentionally  
- \# cause unrelated files to be deleted. Set to 1 to enable remote file  
- \# deletion, zero to allow files to accumulate remotely.  
- delete = 0
+  >  [[RSYNC]]  
+  >  \# rsync'ing to a webserver is treated as just another report.  
+  > skin = Rsync  
+  > 
+  >  \# If you wish to use rsync, you must configure passwordless ssh using  
+  >  \# public/private key authentication from the user account that weewx  
+  >  \# runs to the user account on the remote machine where the files  
+  >  \# will be copied.  
+  >  \#  
+  >  \# If you wish to use rsync, set "enable" to "true", then  
+  >  \# fill out server, user, and path.  
+  >  \# The server should appear in your .ssh/config file.  
+  >  \# The user is the username used in the identity file.  
+  >  \# The path is the destination directory, such as /var/www/html/weather.  
+  >  \# Be sure that the user has write permissions on the destination!  
+  >  enable = true  
+  >  server = bettaforecast.**in**  
+  >  user = weewx  
+  >  path = /var/www/bettaforecast  
+  > 
+  >  \# To upload files from something other than what HTML_ROOT is set  
+  >  \# to above, specify a different HTML_ROOT here.  
+  >  \#HTML_ROOT = /var/www/html/weewx  
+  > 
+  >  \# Rsync can be configured to remove files from the remote server if  
+  >  \# they don't exist under HTML_ROOT locally. USE WITH CAUTION: if you  
+  >  \# make a mistake in the remote path, you could could unintentionally  
+  >  \# cause unrelated files to be deleted. Set to 1 to enable remote file  
+  >  \# deletion, zero to allow files to accumulate remotely.  
+  >  delete = 0
 
 ```
 vrishabkakade@freedompi:/etc/weewx \$ sudo systemctl restart weewx
@@ -1205,26 +1209,26 @@ vrishabkakade@freedompi:/etc/weewx \$ sudo systemctl restart weewx
 vrishabkakade@freedompi:/etc/weewx \$ sudo systemctl status weewx
 
 ```
-● weewx.service - WeeWX  
- Loaded: loaded (/lib/systemd/system/weewx.service; enabled; preset: enabled)  
- Active: active (running) since Fri 2024-04-12 16:09:48 IST; 5s ago  
- Docs: https://weewx.com/docs  
- Main PID: 16834 (python3)  
- Tasks: 10 (limit: 4444)  
- CPU: 470ms  
- CGroup: /system.slice/weewx.service  
- └─16834 python3 /usr/share/weewx/weewxd.py /etc/weewx/weewx.conf  
-  
-Apr 12 16:09:48 freedompi weewxd[16834]: INFO weewx.restx: WOW: Data **for** station 00ef03c0-7cf6-ee11-a81c-0022489bcb24 will be posted  
-Apr 12 16:09:48 freedompi weewxd[16834]: INFO weewx.restx: AWEKAS: Posting **not** enabled.  
-Apr 12 16:09:48 freedompi weewxd[16834]: INFO user.windy: version **is** 0.7  
-Apr 12 16:09:48 freedompi weewxd[16834]: INFO user.windy: Data will be uploaded to https://stations.windy.com/pws/update  
-Apr 12 16:09:48 freedompi weewxd[16834]: INFO weewx.engine: 'pyephem' detected, extended almanac data **is** available  
-Apr 12 16:09:48 freedompi weewxd[16834]: INFO \__main__: Starting up weewx version 5.0.2  
-Apr 12 16:09:48 freedompi weewxd[16834]: INFO weewx.engine: Using binding 'wx_binding' to database 'weewx.sdb'  
-Apr 12 16:09:48 freedompi weewxd[16834]: INFO weewx.manager: Starting backfill of daily summaries  
-Apr 12 16:09:48 freedompi weewxd[16834]: INFO weewx.manager: Daily summaries up to date  
-Apr 12 16:09:48 freedompi weewxd[16834]: INFO weewx.engine: Starting main packet loop.
+  > ● weewx.service - WeeWX  
+  >  Loaded: loaded (/lib/systemd/system/weewx.service; enabled; preset: enabled)  
+  >  Active: active (running) since Fri 2024-04-12 16:09:48 IST; 5s ago  
+  >  Docs: https://weewx.com/docs  
+  >  Main PID: 16834 (python3)  
+  >  Tasks: 10 (limit: 4444)  
+  >  CPU: 470ms  
+  >  CGroup: /system.slice/weewx.service  
+  >  └─16834 python3 /usr/share/weewx/weewxd.py /etc/weewx/weewx.conf  
+  > 
+  > Apr 12 16:09:48 freedompi weewxd[16834]: INFO weewx.restx: WOW: Data **for** station 00ef03c0-7cf6-ee11-a81c-0022489bcb24 will be posted  
+  > Apr 12 16:09:48 freedompi weewxd[16834]: INFO weewx.restx: AWEKAS: Posting **not** enabled.  
+  > Apr 12 16:09:48 freedompi weewxd[16834]: INFO user.windy: version **is** 0.7  
+  > Apr 12 16:09:48 freedompi weewxd[16834]: INFO user.windy: Data will be uploaded to https://stations.windy.com/pws/update  
+  > Apr 12 16:09:48 freedompi weewxd[16834]: INFO weewx.engine: 'pyephem' detected, extended almanac data **is** available  
+  > Apr 12 16:09:48 freedompi weewxd[16834]: INFO \__main__: Starting up weewx version 5.0.2  
+  > Apr 12 16:09:48 freedompi weewxd[16834]: INFO weewx.engine: Using binding 'wx_binding' to database 'weewx.sdb'  
+  > Apr 12 16:09:48 freedompi weewxd[16834]: INFO weewx.manager: Starting backfill of daily summaries  
+  > Apr 12 16:09:48 freedompi weewxd[16834]: INFO weewx.manager: Daily summaries up to date  
+  > Apr 12 16:09:48 freedompi weewxd[16834]: INFO weewx.engine: Starting main packet loop.
 
 ## 🔐Add SSL to the webserver
 
@@ -1271,8 +1275,8 @@ If you followed the [virtual host setup step in the Apache installation tutorial
 [weewx@cloud009 \~]\$ sudo apache2ctl configtest
 
 ```
-AH00558: apache2: Could **not** reliably determine the server's fully qualified domain name, using cloud009.annaiservers.com. Set the 'ServerName' directive globally to suppress this message  
-Syntax OK
+  > AH00558: apache2: Could **not** reliably determine the server's fully qualified domain name, using cloud009.annaiservers.com. Set the 'ServerName' directive globally to suppress this message  
+  > Syntax OK
 
 You should receive Syntax OK as a response. If you get an error, reopen the virtual host file and check for any typos or missing characters. Once your configuration file’s syntax is correct, reload Apache so that the changes take effect:
 
@@ -1294,52 +1298,52 @@ Certbot provides a variety of ways to obtain SSL certificates through plugins. T
 [weewx@cloud009 \~]\$ sudo certbot –apache
 
 ```
-Saving debug log to /var/log/letsencrypt/letsencrypt.log  
-Enter email address (used **for** urgent renewal **and** security notices)  
- (Enter 'c' to cancel): vrishabkakade@gmail.com  
-  
-\- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-Please read **the** Terms **of** Service **at**  
-**https**://letsencrypt.org/documents/LE-SA-v1.4-April-3-2024.pdf. You must agree **in**  
-order to register **with** **the** ACME server. Do you agree?  
-\- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-(Y)es/(N)o: Y  
-  
-\- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-Would you be willing, once your **first** certificate is successfully issued, to  
-share your email address **with** **the** Electronic Frontier Foundation, **a** founding  
-partner **of** **the** Let's Encrypt project and the non-profit organization that  
-develops Certbot? We'd like to send you email about our work encrypting **the** web,  
-EFF news, campaigns, **and** ways to support digital freedom.  
-\- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-(Y)es/(N)o: N  
-Account registered.  
-  
-Which names would you like to activate HTTPS **for**?  
-\- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-1: bettaforecast.**in**  
-2: www.bettaforecast  
-\- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-Select **the** appropriate numbers separated **by** commas **and**/**or** spaces, **or** leave input  
-blank to select all options shown (Enter 'c' to cancel): 1  
-Requesting **a** certificate **for** bettaforecast.**in**  
-  
-Successfully received certificate.  
-Certificate is saved **at**: /etc/letsencrypt/live/bettaforecast.**in**/fullchain.pem  
-Key is saved **at**: /etc/letsencrypt/live/bettaforecast.**in**/privkey.pem  
-This certificate expires **on** **2024-07-11**.  
-These files will be updated when **the** certificate renews.  
-Certbot has set up **a** scheduled task to automatically renew this certificate **in** **the** background.  
-  
-Deploying certificate  
-Successfully deployed certificate **for** bettaforecast.**in** to /etc/apache2/sites-available/bettaforecast-le-ssl.conf  
-Congratulations! You have successfully enabled HTTPS **on** **https**://**bettaforecast**.**in**  
-  
-\- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-If you like Certbot, please consider supporting our work **by**:  
- \* Donating to ISRG / Let's Encrypt: https://letsencrypt.org/donate  
- \* Donating to EFF: https://eff.org/donate-le  
-\- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  > Saving debug log to /var/log/letsencrypt/letsencrypt.log  
+  > Enter email address (used **for** urgent renewal **and** security notices)  
+  >  (Enter 'c' to cancel): vrishabkakade@gmail.com  
+  > 
+  > \- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+  > Please read **the** Terms **of** Service **at**  
+  > **https**://letsencrypt.org/documents/LE-SA-v1.4-April-3-2024.pdf. You must agree **in**  
+  > order to register **with** **the** ACME server. Do you agree?  
+  > \- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+  > (Y)es/(N)o: Y  
+  > 
+  > \- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+  > Would you be willing, once your **first** certificate is successfully issued, to  
+  > share your email address **with** **the** Electronic Frontier Foundation, **a** founding  
+  > partner **of** **the** Let's Encrypt project and the non-profit organization that  
+  > develops Certbot? We'd like to send you email about our work encrypting **the** web,  
+  > EFF news, campaigns, **and** ways to support digital freedom.  
+  > \- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+  > (Y)es/(N)o: N  
+  > Account registered.  
+  > 
+  > Which names would you like to activate HTTPS **for**?  
+  > \- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+  > 1: bettaforecast.**in**  
+  > 2: www.bettaforecast  
+  > \- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+  > Select **the** appropriate numbers separated **by** commas **and**/**or** spaces, **or** leave input  
+  > blank to select all options shown (Enter 'c' to cancel): 1  
+  > Requesting **a** certificate **for** bettaforecast.**in**  
+  > 
+  > Successfully received certificate.  
+  > Certificate is saved **at**: /etc/letsencrypt/live/bettaforecast.**in**/fullchain.pem  
+  > Key is saved **at**: /etc/letsencrypt/live/bettaforecast.**in**/privkey.pem  
+  > This certificate expires **on** **2024-07-11**.  
+  > These files will be updated when **the** certificate renews.  
+  > Certbot has set up **a** scheduled task to automatically renew this certificate **in** **the** background.  
+  > 
+  > Deploying certificate  
+  > Successfully deployed certificate **for** bettaforecast.**in** to /etc/apache2/sites-available/bettaforecast-le-ssl.conf  
+  > Congratulations! You have successfully enabled HTTPS **on** **https**://**bettaforecast**.**in**  
+  > 
+  > \- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+  > If you like Certbot, please consider supporting our work **by**:  
+  > \* Donating to ISRG / Let's Encrypt: https://letsencrypt.org/donate  
+  >  \* Donating to EFF: https://eff.org/donate-le  
+  > \- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Your certificate is now installed and loaded into Apache’s configuration. Try reloading your website using https:// and notice your browser’s security indicator. It should indicate that your site is properly secured, typically by a lock icon in the address bar.
 
@@ -1361,13 +1365,13 @@ To check the status of this service and make sure it’s active, run the followi
 [weewx@cloud009 \~]\$ sudo systesudo systemctl status certbot.timer
 
 ```
-● certbot.timer - Run certbot twice daily  
- Loaded: loaded (/lib/systemd/system/certbot.timer; enabled; vendor preset: enabled)  
- Active: active (waiting) since Fri 2024-04-12 10:55:33 UTC; 11min ago  
- Trigger: Fri 2024-04-12 13:27:07 UTC; 2h 19min left  
- Triggers: ● certbot.service  
-  
-Apr 12 10:55:33 cloud009.annaiservers.com systemd[1]: Started Run certbot twice daily.
+  > ● certbot.timer - Run certbot twice daily  
+  >  Loaded: loaded (/lib/systemd/system/certbot.timer; enabled; vendor preset: enabled)  
+  >  Active: active (waiting) since Fri 2024-04-12 10:55:33 UTC; 11min ago  
+  >  Trigger: Fri 2024-04-12 13:27:07 UTC; 2h 19min left  
+  >  Triggers: ● certbot.service  
+  > 
+  > Apr 12 10:55:33 cloud009.annaiservers.com systemd[1]: Started Run certbot twice daily.
 
 To test the renewal process, you can do a dry run with certbot:
 
@@ -1375,18 +1379,18 @@ To test the renewal process, you can do a dry run with certbot:
 [weewx@cloud009 \~]\$ sudo certbot renew --dry-run
 
 ```
-Saving debug log to /var/log/letsencrypt/letsencrypt.log  
-  
-\- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-Processing /etc/letsencrypt/renewal/bettaforecast.**in**.conf  
-\- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-Account registered.  
-Simulating renewal of an existing certificate **for** bettaforecast.**in**  
-  
-\- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-Congratulations, all simulated renewals succeeded:  
- /etc/letsencrypt/live/bettaforecast.**in**/fullchain.pem (success)  
-\- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  > Saving debug log to /var/log/letsencrypt/letsencrypt.log  
+  > 
+  > \- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+  > Processing /etc/letsencrypt/renewal/bettaforecast.**in**.conf  
+  > \- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+  > Account registered.  
+  > Simulating renewal of an existing certificate **for** bettaforecast.**in**  
+  >   
+  > \- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+  > Congratulations, all simulated renewals succeeded:  
+  >  /etc/letsencrypt/live/bettaforecast.**in**/fullchain.pem (success)  
+  > \- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 If you don’t receive any errors, you’re all set. When necessary, Certbot will renew your certificates and reload Apache to pick up the changes. If the automated renewal process ever fails, Let’s Encrypt will send a message to the email you specified, warning you when your certificate is about to expire.
 
@@ -1408,12 +1412,12 @@ vrishabkakade@freedompi:/tmp \$ wget -O inigo-metric.tar.gz https://github.com/e
 vrishabkakade@freedompi:/tmp \$ sudo weectl extension install inigo-metric.tar.gz
 
 ```
-**Using** **configuration** file /etc/weewx/weewx.conf  
-Install **extension** 'inigo-metric.tar.gz' (y/n)? y  
-Extracting **from** tar archive inigo-metric.tar.gz  
-Saving installer file **to** /etc/weewx/bin/**user**/installer/Inigo  
-Saved **copy** **of** **configuration** **as** /etc/weewx/weewx.conf.20240412182619  
-Finished installing **extension** Inigo **from** inigo-metric.tar.gz
+  > **Using** **configuration** file /etc/weewx/weewx.conf  
+  > Install **extension** 'inigo-metric.tar.gz' (y/n)? y  
+  > Extracting **from** tar archive inigo-metric.tar.gz  
+  > Saving installer file **to** /etc/weewx/bin/**user**/installer/Inigo  
+  > Saved **copy** **of** **configuration** **as** /etc/weewx/weewx.conf.20240412182619  
+  > Finished installing **extension** Inigo **from** inigo-metric.tar.gz
 
 ### 🌝Step 2, Almanac (optional)
 
@@ -1431,26 +1435,26 @@ vrishabkakade@freedompi:/tmp \$ sudo systemctl restart weewx
 vrishabkakade@freedompi:/tmp \$ sudo systemctl status weewx
 
 ```
-● weewx.service - WeeWX  
- Loaded: loaded (/lib/systemd/system/weewx.service; enabled; preset: enabled)  
- Active: active (running) since Fri 2024-04-12 18:28:42 IST; 7s ago  
- Docs: https://weewx.com/docs  
- Main PID: 17971 (python3)  
- Tasks: 10 (limit: 4444)  
- CPU: 502ms  
- CGroup: /system.slice/weewx.service  
- └─17971 python3 /usr/share/weewx/weewxd.py /etc/weewx/weewx.conf  
-  
-Apr 12 18:28:43 freedompi weewxd[17971]: INFO weewx.restx: WOW: Data **for** station 00ef03c0-7cf6-ee11-a81c-0022489bcb24 will be posted  
-Apr 12 18:28:43 freedompi weewxd[17971]: INFO weewx.restx: AWEKAS: Posting **not** enabled.  
-Apr 12 18:28:43 freedompi weewxd[17971]: INFO user.windy: version **is** 0.7  
-Apr 12 18:28:43 freedompi weewxd[17971]: INFO user.windy: Data will be uploaded to https://stations.windy.com/pws/update  
-Apr 12 18:28:43 freedompi weewxd[17971]: INFO weewx.engine: 'pyephem' detected, extended almanac data **is** available  
-Apr 12 18:28:43 freedompi weewxd[17971]: INFO \__main__: Starting up weewx version 5.0.2  
-Apr 12 18:28:43 freedompi weewxd[17971]: INFO weewx.engine: Using binding 'wx_binding' to database 'weewx.sdb'  
-Apr 12 18:28:43 freedompi weewxd[17971]: INFO weewx.manager: Starting backfill of daily summaries  
-Apr 12 18:28:43 freedompi weewxd[17971]: INFO weewx.manager: Daily summaries up to date  
-Apr 12 18:28:43 freedompi weewxd[17971]: INFO weewx.engine: Starting main packet loop.
+  > ● weewx.service - WeeWX  
+  >  Loaded: loaded (/lib/systemd/system/weewx.service; enabled; preset: enabled)  
+  >  Active: active (running) since Fri 2024-04-12 18:28:42 IST; 7s ago  
+  >  Docs: https://weewx.com/docs  
+  >  Main PID: 17971 (python3)  
+  >  Tasks: 10 (limit: 4444)  
+  >  CPU: 502ms  
+  >  CGroup: /system.slice/weewx.service  
+  >  └─17971 python3 /usr/share/weewx/weewxd.py /etc/weewx/weewx.conf  
+  > 
+  > Apr 12 18:28:43 freedompi weewxd[17971]: INFO weewx.restx: WOW: Data **for** station 00ef03c0-7cf6-ee11-a81c-0022489bcb24 will be posted  
+  > Apr 12 18:28:43 freedompi weewxd[17971]: INFO weewx.restx: AWEKAS: Posting **not** enabled.  
+  > Apr 12 18:28:43 freedompi weewxd[17971]: INFO user.windy: version **is** 0.7  
+  > Apr 12 18:28:43 freedompi weewxd[17971]: INFO user.windy: Data will be uploaded to https://stations.windy.com/pws/update  
+  > Apr 12 18:28:43 freedompi weewxd[17971]: INFO weewx.engine: 'pyephem' detected, extended almanac data **is** available  
+  > Apr 12 18:28:43 freedompi weewxd[17971]: INFO \__main__: Starting up weewx version 5.0.2  
+  > Apr 12 18:28:43 freedompi weewxd[17971]: INFO weewx.engine: Using binding 'wx_binding' to database 'weewx.sdb'  
+  > Apr 12 18:28:43 freedompi weewxd[17971]: INFO weewx.manager: Starting backfill of daily summaries  
+  > Apr 12 18:28:43 freedompi weewxd[17971]: INFO weewx.manager: Daily summaries up to date  
+  > Apr 12 18:28:43 freedompi weewxd[17971]: INFO weewx.engine: Starting main packet loop.
 
 ### 📃Step 4, create inigo-settings.txt
 
@@ -1466,13 +1470,13 @@ vrishabkakade@freedompi:/tmp \$ sudo vi /var/www/html/weewx/inigo-settings.txt
 [weewx@cloud009 \~]\$ cat /var/www/bettaforecast/inigo-settings.txt
 
 ```
-data=https://bettaforecast.in/inigo-data.txt  
-radtype=image  
-radar=https://embed.windy.com/embed2.html?lat=-34&lon=151&zoom=11&level=surface&overlay=radar&menu=&message=true&marker=&calendar=&pressure=true&type=map&location=coordinates&detail=&detailLat=-34&detailLon=150&metricWind=km%2Fh&metricTemp=**%C2%B0C**\&radarRange=-1  
-fctype=met.no  
-forecast=https://api.met.no/weatherapi/locationforecast/2.0/compact?altitude=1181&lat=12.359722&lon=77.879722  
-\#webcam=http://mx.cafesydney.com:8888/mjpg/video.mjpg  
-\#custom=http://m.bom.gov.au/nsw/sydney/radar/
+  > data=https://bettaforecast.in/inigo-data.txt  
+  > radtype=image  
+  > radar=https://embed.windy.com/embed2.html?lat=-34&lon=151&zoom=11&level=surface&overlay=radar&menu=&message=true&marker=&calendar=&pressure=true&type=map&location=coordinates&detail=&detailLat=-34&detailLon=150&metricWind=km%2Fh&metricTemp=**%C2%B0C**\&radarRange=-1  
+  > fctype=met.no  
+  > forecast=https://api.met.no/weatherapi/locationforecast/2.0/compact?altitude=1181&lat=12.359722&lon=77.879722  
+  > \#webcam=http://mx.cafesydney.com:8888/mjpg/video.mjpg  
+  > \#custom=http://m.bom.gov.au/nsw/sydney/radar/
 
 ### ☔Step 5, using offset rain times (optional)
 
@@ -1482,11 +1486,11 @@ Historically rainfall is measured in Australia at 9am, so it's useful for compar
 vrishabkakade@freedompi:/etc/weewx \$ vi /etc/weewx/since.tmpl
 
 ```
-\#if \$varExists('since')  
-\$since(\$hour=9).rain.**sum**.formatted\|\$since(\$hour=9,\$today=False).rain.**sum**.formatted\|9am\|\#slurp  
-\#else  
-\|\|\|\#slurp  
-\#end **if**
+  > \#if \$varExists('since')  
+  > \$since(\$hour=9).rain.**sum**.formatted\|\$since(\$hour=9,\$today=False).rain.**sum**.formatted\|9am\|\#slurp  
+  > \#else  
+  > \|\|\|\#slurp  
+  > \#end **if**
 
 ### 📱Step 6, installing the app
 
@@ -1528,20 +1532,20 @@ vrishabkakade@freedompi:/tmp \$ wget https://github.com/poblabs/weewx-belchertow
 vrishabkakade@freedompi:\~ \$ sudo weectl extension install weewx-belchertown-release.1.3.1.tar
 
 ```
-Using **configuration** **file** /etc/weewx/weewx.conf  
-Install extension 'weewx-belchertown-**release**.1.3.1.tar' (y/n)? y  
-Traceback (most recent call last):  
-**File** "/usr/share/weewx/weectl.py", line 74, **in**  
-main()  
-**File** "/usr/share/weewx/weectl.py", line 66, **in** main  
-namespace.func(namespace)  
-**File** "/usr/share/weewx/weectllib/init.py", line 121, **in** dispatch  
-namespace.action_func(config_dict, namespace)  
-**File** "/usr/share/weewx/weectllib/extension_cmd.py", line 116, **in** install_extension  
-ext.install_extension(namespace.source, no_confirm=namespace.yes)  
-**File** "/usr/share/weewx/weecfg/extension.py", line 143, **in** install_extension  
-raise InstallError(f"Unrecognized type for {extension_path}")  
-weecfg.extension.InstallError: Unrecognized **type** **for** weewx-belchertown-**release**.1.3.1.tar
+  > Using **configuration** **file** /etc/weewx/weewx.conf  
+  > Install extension 'weewx-belchertown-**release**.1.3.1.tar' (y/n)? y  
+  > Traceback (most recent call last):  
+  > **File** "/usr/share/weewx/weectl.py", line 74, **in**  
+  > main()  
+  > **File** "/usr/share/weewx/weectl.py", line 66, **in** main  
+  > namespace.func(namespace)  
+  > **File** "/usr/share/weewx/weectllib/init.py", line 121, **in** dispatch  
+  > namespace.action_func(config_dict, namespace)  
+  > **File** "/usr/share/weewx/weectllib/extension_cmd.py", line 116, **in** install_extension  
+  > ext.install_extension(namespace.source, no_confirm=namespace.yes)  
+  > **File** "/usr/share/weewx/weecfg/extension.py", line 143, **in** install_extension  
+  > raise InstallError(f"Unrecognized type for {extension_path}")  
+  > weecfg.extension.InstallError: Unrecognized **type** **for** weewx-belchertown-**release**.1.3.1.tar
 
 v1.3.1 Threw errors constantly. So I installed 1.3
 
@@ -1551,12 +1555,12 @@ wget https://github.com/poblabs/weewx-belchertown/releases/download/weewx-belche
 vrishabkakade@freedompi:/tmp \$ sudo weectl extension install weewx-belchertown-release-1.3.tar.gz
 
 ```
-**Using** **configuration** file /etc/weewx/weewx.conf  
-Install **extension** 'weewx-belchertown-release-1.3.tar.gz' (y/n)? y  
-Extracting **from** tar archive weewx-belchertown-**release**-1.3.tar.gz  
-Saving installer file **to** /etc/weewx/bin/**user**/installer/Belchertown  
-Saved **copy** **of** **configuration** **as** /etc/weewx/weewx.conf.20240413114922  
-Finished installing **extension** Belchertown **from** weewx-belchertown-**release**-1.3.tar.gz
+  > **Using** **configuration** file /etc/weewx/weewx.conf  
+  > Install **extension** 'weewx-belchertown-release-1.3.tar.gz' (y/n)? y  
+  > Extracting **from** tar archive weewx-belchertown-**release**-1.3.tar.gz  
+  > Saving installer file **to** /etc/weewx/bin/**user**/installer/Belchertown  
+  > Saved **copy** **of** **configuration** **as** /etc/weewx/weewx.conf.20240413114922  
+  > Finished installing **extension** Belchertown **from** weewx-belchertown-**release**-1.3.tar.gz
 
 Since I installed as sudo it changed it to root. Change permissions to weewx user
 
@@ -1574,14 +1578,14 @@ vrishabkakade@freedompi:\~ \$ sudo systemctl status weewx
 ```
 I got the below error after the installation
 
-**Uncaught** **TypeError**: **Highcharts**.chart **is** **not** **a** **constructor**  
- **at** **Object**.\<**anonymous**\> (**belchertown**.js?1712999116:2407:25)  
- **at** **Function**.each (**jquery**.min.js:2:2623)  
- **at** **Object**.success (**belchertown**.js?1712999116:1462:16)  
- **at** **u** (**jquery**.min.js:2:27457)  
- **at** **Object**.fireWith [as resolveWith] (**jquery**.min.js:2:28202)  
- **at** **k** (**jquery**.min.js:2:77651)  
- **at** **XMLHttpRequest**.\<**anonymous**\> (**jquery**.min.js:2:79907)
+  > **Uncaught** **TypeError**: **Highcharts**.chart **is** **not** **a** **constructor**  
+  >  **at** **Object**.\<**anonymous**\> (**belchertown**.js?1712999116:2407:25)  
+  >  **at** **Function**.each (**jquery**.min.js:2:2623)  
+  >  **at** **Object**.success (**belchertown**.js?1712999116:1462:16)  
+  >  **at** **u** (**jquery**.min.js:2:27457)  
+  >  **at** **Object**.fireWith [as resolveWith] (**jquery**.min.js:2:28202)  
+  >  **at** **k** (**jquery**.min.js:2:77651)  
+  >  **at** **XMLHttpRequest**.\<**anonymous**\> (**jquery**.min.js:2:79907)
 
 [After update to highcharts.js today we get Highcharts.chart is not a constructor - Stack Overflow](https://stackoverflow.com/questions/76111359/after-update-to-highcharts-js-today-we-get-highcharts-chart-is-not-a-constructor)
 
@@ -1591,25 +1595,22 @@ I changed the code like this:
 vrishabkakade@freedompi:/etc/weewx/skins/Belchertown/js \$ ls -lrat
 
 ```
-total 304  
-\-rw-rw-r-- 1 weewx weewx 765 Apr 13 11:49 responsive-menu.js  
-\-rw-rw-r-- 1 weewx weewx 14 Apr 13 11:49 index.html  
-drwxr-sr-x 11 weewx weewx 4096 Apr 13 14:12 ..  
-\-rw-r--r-- 1 root weewx 143973 Apr 13 14:51 belchertown.js.tmpl.orig  
-drwxr-sr-x 2 weewx weewx 4096 Apr 13 14:51 .  
-\-rw-rw-r-- 1 weewx weewx 143973 Apr 13 14:58 belchertown.js.tmpl
+  > total 304  
+  > \-rw-rw-r-- 1 weewx weewx 765 Apr 13 11:49 responsive-menu.js  
+  > \-rw-rw-r-- 1 weewx weewx 14 Apr 13 11:49 index.html  
+  > drwxr-sr-x 11 weewx weewx 4096 Apr 13 14:12 ..  
+  > \-rw-r--r-- 1 root weewx 143973 Apr 13 14:51 belchertown.js.tmpl.orig  
+  > drwxr-sr-x 2 weewx weewx 4096 Apr 13 14:51 .  
+  > \-rw-rw-r-- 1 weewx weewx 143973 Apr 13 14:58 belchertown.js.tmpl
 
 ```
 vrishabkakade@freedompi:/etc/weewx/skins/Belchertown/js \$ vi belchertown.js.tmpl
 
 ```
-Line 2895 comment and duplicate – remove new word as per the solution
-
-*// Finally all options are done, now show the chart*
-
-*//var chart = new Highcharts.chart(options);*
-
-var chart = Highcharts.chart(options);
+  > Line 2895 comment and duplicate – remove new word as per the solution
+  > *// Finally all options are done, now show the chart*
+  > *//var chart = new Highcharts.chart(options);*
+  > var chart = Highcharts.chart(options);
 
 ### 💿 Setup SMB Server on the Raspberry Pi
 
@@ -1645,12 +1646,12 @@ We can begin modifying the config file by running the command below.
 sudo vi /etc/samba/smb.conf
 
 ```
-[freedompishare]  
-path = /var/lib/weewx  
-**writeable**=Yes  
-create **mask**=0777  
-directory **mask**=0777  
-**public**=no
+  > [freedompishare]  
+  > path = /var/lib/weewx  
+  > **writeable**=Yes  
+  > create **mask**=0777  
+  > directory **mask**=0777  
+  > **public**=no
 
 Next, we need to set up a user for our Samba share on the Raspberry Pi. Without it, we won’t be able to make a connection to the shared network drive.
 
@@ -1716,15 +1717,15 @@ Let’s create a custom configuration file that we’ll add this – and other i
 [weewx@cloud009 \~]\$ sudo vi /etc/mosquitto/conf.d/myconfig.con
 
 ```
-persistence false  
-  
-\# mqtt  
-listener 1883  
-protocol mqtt  
-  
-\# websockets  
-listener 9001  
-protocol websockets
+  > persistence false  
+  > 
+  > \# mqtt  
+  > listener 1883  
+  > protocol mqtt  
+  > 
+  > \# websockets  
+  > listener 9001  
+  > protocol websockets
 
 Make sure you have no empty spaces at the end of those lines or Mosquitto may give you an error.
 
@@ -1748,15 +1749,15 @@ Next is to create an MQTT ACL (access control list) so that anonymous users are 
 [weewx@cloud009 \~]\$ sudo vi /etc/mosquitto/acl
 
 ```
-\# Allow anonymous access to the sys  
-topic read \$SYS/\#  
-  
-\# Allow anonymous to read weather  
-topic read weather/\#  
-  
-\# weewx readwrite to the loop  
-user weewx  
-topic weather/\#
+  > \# Allow anonymous access to the sys  
+  > topic read \$SYS/\#  
+  > 
+  > \# Allow anonymous to read weather  
+  > topic read weather/\#  
+  > 
+  > \# weewx readwrite to the loop  
+  > user weewx  
+  > topic weather/\#
 
 #### Add to the custom broker configuration
 
@@ -1766,14 +1767,14 @@ Now let’s add the authentication and access control to the custom configuratio
 [weewx@cloud009 \~]\$ sudo vi /etc/mosquitto/conf.d/myconfig.conf
 
 ```
-allow_anonymous **true**  
-password_file /etc/mosquitto/passwd  
-  
-acl_file /etc/mosquitto/acl
+  > allow_anonymous **true**  
+  > password_file /etc/mosquitto/passwd  
+  > 
+  > acl_file /etc/mosquitto/acl
 
 Save your file and run mosquitto with mosquitto -c /etc/mosquitto/mosquitto.conf and with another SSH client, log into your server and check that the MQTT ports are open. Run this command sudo netstat -tulpn \| grep 1883 and you should see port 1883 open. Repeat with port 9001 to verify websockets are open. It should look something like:
 
-tcp 0 0 127.0.0.1:1883 0.0.0.0:\* LISTEN 973/mosquitto
+  > tcp 0 0 127.0.0.1:1883 0.0.0.0:\* LISTEN 973/mosquitto
 
 If it’s open like above then open 2 more SSH connections to your server to test publish and subscribe.
 
@@ -1783,8 +1784,8 @@ If it’s open like above then open 2 more SSH connections to your server to tes
 [weewx@cloud009 \~]\$ sudo netstat -tulpn \| grep 1883
 
 ```
-tcp 0 0 127.0.0.1:1883 0.0.0.0:\* LISTEN 114850/mosquitto  
-tcp6 0 0 ::1:1883 :::\* LISTEN 114850/mosquitto
+  > tcp 0 0 127.0.0.1:1883 0.0.0.0:\* LISTEN 114850/mosquitto  
+  > tcp6 0 0 ::1:1883 :::\* LISTEN 114850/mosquitto
 
 Session 1: run this command to subscribe to the weather topic.
 
@@ -1806,7 +1807,7 @@ mosquitto_pub -h localhost -t "weather/test" -m "hello world"\`
 [weewx@cloud009 \~]\$ mosquitto_sub -h localhost -t weather/\#
 
 ```
-**hello world**
+  > **hello world**
 
 This command does not use any authentication so **it should fail**! Your mosquitto_sub window should not show anything. If you do not see anything, so far so good!
 
@@ -1820,8 +1821,8 @@ mosquitto_pub -h localhost -t "weather/test" -m "hello world. this is to the wea
 [weewx@cloud009 \~]\$ mosquitto_sub -h localhost -t weather/\#
 
 ```
-hello world  
-hello world. **this** **is** **to** the weather topic **with** authentication
+  > hello world  
+  > hello world. **this** **is** **to** the weather topic **with** authentication
 
 You should see something in your mosquitto_sub window now! If you do, great! If not, back up and try everything again. Sometimes Mosquitto is fussy and requires a full reboot. You can also check the Mosquitto log file at /var/log/mosquitto/mosquitto.log
 
@@ -1839,46 +1840,46 @@ Update your custom MQTT config file and add the new SSL certificates. Run sudo n
 [weewx@cloud009 \~]\$ sudo vi /etc/mosquitto/conf.d/myconfig.conf
 
 ```
-allow_anonymous true  
-password_file /etc/mosquitto/passwd  
-  
-  
-acl_file /etc/mosquitto/acl  
-  
-persistence false  
-  
-\# mqtt  
-listener 1883  
-listener 8883  
-certfile /etc/mosquitto/certs/cert.pem  
-cafile /etc/mosquitto/certs/chain.pem  
-keyfile /etc/mosquitto/certs/privkey.pem  
-protocol mqtt  
-  
-\# websockets  
-listener 9001  
-certfile /etc/mosquitto/certs/cert.pem  
-cafile /etc/mosquitto/certs/chain.pem  
-keyfile /etc/mosquitto/certs/privkey.pem
+  > allow_anonymous true  
+  > password_file /etc/mosquitto/passwd  
+  > 
+  > 
+  > acl_file /etc/mosquitto/acl  
+  > 
+  > persistence false  
+  > 
+  > \# mqtt  
+  > listener 1883  
+  > listener 8883  
+  > certfile /etc/mosquitto/certs/cert.pem  
+  > cafile /etc/mosquitto/certs/chain.pem  
+  > keyfile /etc/mosquitto/certs/privkey.pem  
+  > protocol mqtt  
+  > 
+  > \# websockets  
+  > listener 9001  
+  > certfile /etc/mosquitto/certs/cert.pem  
+  > cafile /etc/mosquitto/certs/chain.pem  
+  > keyfile /etc/mosquitto/certs/privkey.pem
 
 ```
 [weewx@cloud009 \~]\$ sudo ls -lrat /etc/letsencrypt/archive/bettaforecast.in
 
 ```
-total 24  
-\-rw------- 1 root root 1704 Apr 12 16:35 privkey1.pem  
-\-rw-r--r-- 1 root root 3595 Apr 12 16:35 fullchain1.pem  
-\-rw-r--r-- 1 root root 1826 Apr 12 16:35 chain1.pem  
-\-rw-r--r-- 1 root root 1769 Apr 12 16:35 cert1.pem  
-drwx------ 3 root root 4096 Apr 12 16:35 ..  
-drwxr-xr-x 2 root root 4096 Apr 12 16:35 .
+  > total 24  
+  > \-rw------- 1 root root 1704 Apr 12 16:35 privkey1.pem  
+  > \-rw-r--r-- 1 root root 3595 Apr 12 16:35 fullchain1.pem  
+  > \-rw-r--r-- 1 root root 1826 Apr 12 16:35 chain1.pem  
+  > \-rw-r--r-- 1 root root 1769 Apr 12 16:35 cert1.pem  
+  > drwx------ 3 root root 4096 Apr 12 16:35 ..  
+  > drwxr-xr-x 2 root root 4096 Apr 12 16:35 .
 
 I get the below error with the above permissions
 
-1713070124: Error: Unable to load CA certificates. Check cafile "/etc/letsencrypt/live/bettaforecast.in/chain.pem".  
-1713070124: OpenSSL Error[0]: error:8000000D:system library::Permission denied  
-1713070124: OpenSSL Error[1]: error:10080002:BIO routines::system **lib**  
-1713070124: OpenSSL Error[2]: error:05880002:x509 certificate routines::system **lib**
+  > 1713070124: Error: Unable to load CA certificates. Check cafile "/etc/letsencrypt/live/bettaforecast.in/chain.pem".  
+  > 1713070124: OpenSSL Error[0]: error:8000000D:system library::Permission denied  
+  > 1713070124: OpenSSL Error[1]: error:10080002:BIO routines::system **lib**  
+  > 1713070124: OpenSSL Error[2]: error:05880002:x509 certificate routines::system **lib**
 
 Copy the certificates to a new location and change permissions there so that we don’t affect the Apache Letsencrypt certificates.
 
@@ -1886,13 +1887,13 @@ Copy the certificates to a new location and change permissions there so that we 
 [root@cloud009 \~]\$ cat /etc/mosqu/etc/mosquitto/certs/copy_ssl_certs_mqtt.sh
 
 ```
-\#!/bin/bash  
-SHELL=/bin/bash  
-export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:\$PATH  
-cp /etc/letsencrypt/live/bettaforecast.**in**/privkey.pem /etc/mosquitto/certs  
-cp /etc/letsencrypt/live/bettaforecast.**in**/fullchain.pem /etc/mosquitto/certs  
-cp /etc/letsencrypt/live/bettaforecast.**in**/chain.pem /etc/mosquitto/certs  
-cp /etc/letsencrypt/live/bettaforecast.**in**/cert.pem /etc/mosquitto/certs
+  > \#!/bin/bash  
+  > SHELL=/bin/bash  
+  > export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:\$PATH  
+  > cp /etc/letsencrypt/live/bettaforecast.**in**/privkey.pem /etc/mosquitto/certs  
+  > cp /etc/letsencrypt/live/bettaforecast.**in**/fullchain.pem /etc/mosquitto/certs  
+  > cp /etc/letsencrypt/live/bettaforecast.**in**/chain.pem /etc/mosquitto/certs  
+  > cp /etc/letsencrypt/live/bettaforecast.**in**/cert.pem /etc/mosquitto/certs
 
 Put it in the crontab so the script can run everyday.
 
@@ -1900,8 +1901,8 @@ Put it in the crontab so the script can run everyday.
 [root@cloud009 \~]\$ crontab -l
 
 ```
-52 \* \* \* \* cd /etc/mosquitto/certs && /**usr**/bin/sh /etc/mosquitto/certs/copy_ssl_certs_mqtt.sh \>\> /etc/mosquitto/certs/copy_ssl_certs_mqtt.**log** 2\>&1  
-0 0 \* \* 0 /home/weewx/backup_scripts/backup_weewx.sh
+  > 52 \* \* \* \* cd /etc/mosquitto/certs && /**usr**/bin/sh /etc/mosquitto/certs/copy_ssl_certs_mqtt.sh \>\> /etc/mosquitto/certs/copy_ssl_certs_mqtt.**log** 2\>&1  
+  > 0 0 \* \* 0 /home/weewx/backup_scripts/backup_weewx.sh
 
 Restart your mosquitto server with sudo service mosquitto restart and check that the ports are open with sudo netstat -tulpn \| grep -E '8883\|9001'. You should see something similar to:
 
@@ -1911,9 +1912,9 @@ Restart your mosquitto server with sudo service mosquitto restart and check that
 [weewx@cloud009 /etc/mosquitto/certs]\$ sudo netstat -tulpn \| grep -E '8883\|9001'
 
 ```
-tcp 0 0 0.0.0.0:8883 0.0.0.0:\* LISTEN 123262/mosquitto  
-tcp6 0 0 :::9001 :::\* LISTEN 123262/mosquitto  
-tcp6 0 0 :::8883 :::\* LISTEN 123262/mosquito
+  > tcp 0 0 0.0.0.0:8883 0.0.0.0:\* LISTEN 123262/mosquitto  
+  > tcp6 0 0 :::9001 :::\* LISTEN 123262/mosquitto  
+  > tcp6 0 0 :::8883 :::\* LISTEN 123262/mosquito
 
 #### Install Mosquito on the Raspberry Pi
 
@@ -1943,7 +1944,7 @@ The document is very well written and I have made a lot of customizations. Refer
 weewx@freedompi:/etc/weewx/skins/Belchertown\$ ls -lrat graphs.conf
 
 ```
-\-rw-r--r-- 1 weewx weewx 23308 Apr 17 09:40 graphs.conf
+  > \-rw-r--r-- 1 weewx weewx 23308 Apr 17 09:40 graphs.conf
 
 #### SCRIPT TO AUTOMATE COPYING OF CERTS FOR MQTT
 
@@ -1955,14 +1956,14 @@ Source certs
 [weewx@cloud009 \~]\$ sudo ls -lrat /etc/letsencrypt/live/bettaforecast.in
 
 ```
-total 12  
-lrwxrwxrwx 1 root root 43 Apr 12 16:35 privkey.pem -\> ../../archive/bettaforecast.**in**/privkey1.pem  
-lrwxrwxrwx 1 root root 45 Apr 12 16:35 fullchain.pem -\> ../../archive/bettaforecast.**in**/fullchain1.pem  
-lrwxrwxrwx 1 root root 41 Apr 12 16:35 chain.pem -\> ../../archive/bettaforecast.**in**/chain1.pem  
-lrwxrwxrwx 1 root root 40 Apr 12 16:35 cert.pem -\> ../../archive/bettaforecast.**in**/cert1.pem  
-drwx------ 3 root root 4096 Apr 12 16:35 ..  
-drwxr-xr-x 2 root root 4096 Apr 12 16:35 .  
-\-rw-r--r-- 1 root root 692 Apr 12 16:35 README
+  > total 12  
+  > lrwxrwxrwx 1 root root 43 Apr 12 16:35 privkey.pem -\> ../../archive/bettaforecast.**in**/privkey1.pem  
+  > lrwxrwxrwx 1 root root 45 Apr 12 16:35 fullchain.pem -\> ../../archive/bettaforecast.**in**/fullchain1.pem  
+  > lrwxrwxrwx 1 root root 41 Apr 12 16:35 chain.pem -\> ../../archive/bettaforecast.**in**/chain1.pem  
+  > lrwxrwxrwx 1 root root 40 Apr 12 16:35 cert.pem -\> ../../archive/bettaforecast.**in**/cert1.pem  
+  > drwx------ 3 root root 4096 Apr 12 16:35 ..  
+  > drwxr-xr-x 2 root root 4096 Apr 12 16:35 .  
+  > \-rw-r--r-- 1 root root 692 Apr 12 16:35 README
 
 MQTT Certs
 
@@ -1970,14 +1971,14 @@ MQTT Certs
 [weewx@cloud009 \~]\$ ls -lrat /etc/mosquitto/certs
 
 ```
-total 28  
-\-rw-r--r-- 1 weewx weewx 130 Nov 19 23:39 README  
-drwxr-xr-x 5 root root 4096 Apr 14 08:43 ..  
-\-rwxr-xr-x 1 weewx weewx 1704 Apr 14 10:24 privkey.pem  
-\-rwxr-xr-- 1 weewx weewx 3595 Apr 14 10:24 fullchain.pem  
-\-rwxr-xr-- 1 weewx weewx 1826 Apr 14 10:24 chain.pem  
-\-rwxr-xr-- 1 weewx weewx 1769 Apr 14 10:24 cert.pem  
-drwxr-xr-x 2 weewx weewx 4096 Apr 14 22:38 .
+  > total 28  
+  > \-rw-r--r-- 1 weewx weewx 130 Nov 19 23:39 README  
+  > drwxr-xr-x 5 root root 4096 Apr 14 08:43 ..  
+  > \-rwxr-xr-x 1 weewx weewx 1704 Apr 14 10:24 privkey.pem  
+  > \-rwxr-xr-- 1 weewx weewx 3595 Apr 14 10:24 fullchain.pem  
+  > \-rwxr-xr-- 1 weewx weewx 1826 Apr 14 10:24 chain.pem  
+  > \-rwxr-xr-- 1 weewx weewx 1769 Apr 14 10:24 cert.pem  
+  > drwxr-xr-x 2 weewx weewx 4096 Apr 14 22:38 .
 
 ```
 [weewx@cloud009 \~]\$ cd /etc/mosquitto/certs
@@ -1985,13 +1986,13 @@ drwxr-xr-x 2 weewx weewx 4096 Apr 14 22:38 .
 [weewx@cloud009 /etc/mosquitto/certs]\$ vi copy_ssl_certs_mqtt.sh
 
 ```
-\#!/bin/bash  
-SHELL=/bin/bash  
-export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:\$PATH  
-cp /etc/letsencrypt/live/bettaforecast.**in**/privkey.pem /etc/mosquitto/certs  
-cp /etc/letsencrypt/live/bettaforecast.**in**/fullchain.pem /etc/mosquitto/certs  
-cp /etc/letsencrypt/live/bettaforecast.**in**/chain.pem /etc/mosquitto/certs  
-cp /etc/letsencrypt/live/bettaforecast.**in**/cert.pem /etc/mosquitto/certs
+  > \#!/bin/bash  
+  > SHELL=/bin/bash  
+  > export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:\$PATH  
+  > cp /etc/letsencrypt/live/bettaforecast.**in**/privkey.pem /etc/mosquitto/certs  
+  > cp /etc/letsencrypt/live/bettaforecast.**in**/fullchain.pem /etc/mosquitto/certs  
+  > cp /etc/letsencrypt/live/bettaforecast.**in**/chain.pem /etc/mosquitto/certs  
+  > cp /etc/letsencrypt/live/bettaforecast.**in**/cert.pem /etc/mosquitto/certs
 
 ```
 [weewx@cloud009 /etc/mosquitto/certs]\$ chmod 755 copy_ssl_certs_mqtt.sh
@@ -1999,8 +2000,8 @@ cp /etc/letsencrypt/live/bettaforecast.**in**/cert.pem /etc/mosquitto/certs
 [root@cloud009 \~]\$ crontab -e
 
 ```
-\# m h dom mon dow command  
-52 \* \* \* \* cd /etc/mosquitto/certs && /usr/bin/sh /etc/mosquitto/certs/copy_ssl_certs_mqtt.sh \>\> /etc/mosquitto/certs/copy_ssl_certs_mqtt.log 2\>&1
+  > \# m h dom mon dow command  
+  > 52 \* \* \* \* cd /etc/mosquitto/certs && /usr/bin/sh /etc/mosquitto/certs/copy_ssl_certs_mqtt.sh \>\> /etc/mosquitto/certs/copy_ssl_certs_mqtt.log 2\>&1
 
 In my case I had to restart cron. No jobs were running from any user.
 
@@ -2014,14 +2015,14 @@ Copy the certs to the raspberry pi as well
 weewx@bettaforecastpi:/tmp/certs \$ ls -lrat /etc/mosquitto/certs
 
 ```
-total 28  
-drwxr-xr-x 5 root root 4096 May 9 20:05 ..  
-\-rwxr-xr-x 1 weewx weewx 1826 May 9 20:16 chain.pem  
-\-rwxr-xr-x 1 weewx weewx 1704 May 9 20:16 privkey.pem  
-\-rwxr-xr-x 1 weewx weewx 130 May 9 20:16 README  
-\-rwxr-xr-x 1 weewx weewx 3595 May 9 20:16 fullchain.pem  
-\-rwxr-xr-x 1 weewx weewx 1769 May 9 20:16 cert.pem  
-drwxr-xr-x 2 root root 4096 May 9 20:17 .
+  > total 28  
+  > drwxr-xr-x 5 root root 4096 May 9 20:05 ..  
+  > \-rwxr-xr-x 1 weewx weewx 1826 May 9 20:16 chain.pem  
+  > \-rwxr-xr-x 1 weewx weewx 1704 May 9 20:16 privkey.pem  
+  > \-rwxr-xr-x 1 weewx weewx 130 May 9 20:16 README  
+  > \-rwxr-xr-x 1 weewx weewx 3595 May 9 20:16 fullchain.pem  
+  > \-rwxr-xr-x 1 weewx weewx 1769 May 9 20:16 cert.pem  
+  > drwxr-xr-x 2 root root 4096 May 9 20:17 .
 
 #### 🛠️ Install MQTT extension for Weewx
 
@@ -2107,6 +2108,7 @@ On the Pi:
 vrishabkakade@freedompi:\~/backup_scripts \$ cat backup_weewx.sh
 
 ```
+```
 cd /mnt/backup  
 sudo touch weewx_bkp_\`hostname\`_\`date +%Y%m%d\`.log  
 sudo chmod 777 weewx_bkp_\`hostname\`_\`date +%Y%m%d\`.log  
@@ -2118,14 +2120,14 @@ then
 else  
  sudo echo "Backup failed" \>\> weewx_bkp_\`hostname\`_\`date +%Y%m%d\`.log  
 fi
-
+```
 I run it once a week
 
 ```
 vrishabkakade@freedompi:\~ \$ crontab -l
 
 ```
-0 0 \* \* 0 /home/vrishabkakade/backup_scripts/backup_weewx.sh
+  > 0 0 \* \* 0 /home/vrishabkakade/backup_scripts/backup_weewx.sh
 
 ON WEB SERVER
 
@@ -2143,6 +2145,7 @@ ON WEB SERVER
 [weewx@cloud009 \~/backup_scripts]\$ cat backup_weewx.sh
 
 ```
+```
 cd /mnt/backup  
 sudo touch weewx_bkp_\`hostname\`_\`date +%Y%m%d\`.log  
 sudo chmod 777 weewx_bkp_\`hostname\`_\`date +%Y%m%d\`.log  
@@ -2154,15 +2157,15 @@ then
 else  
  sudo echo "Backup failed" \>\> weewx_bkp_\`hostname\`_\`date +%Y%m%d\`.log  
 fi
-
+```
 I have to run it as root as it keeps prompting for sudo password otherwise
 
 ```
 [root@cloud009 \~]\$ crontab -l
 
 ```
-52 \* \* \* \* cd /etc/mosquitto/certs && /**usr**/bin/sh /etc/mosquitto/certs/copy_ssl_certs_mqtt.sh \>\> /etc/mosquitto/certs/copy_ssl_certs_mqtt.**log** 2\>&1  
-0 0 \* \* 0 /home/weewx/backup_scripts/backup_weewx.sh
+  > 52 \* \* \* \* cd /etc/mosquitto/certs && /**usr**/bin/sh /etc/mosquitto/certs/copy_ssl_certs_mqtt.sh \>\> /etc/mosquitto/certs/copy_ssl_certs_mqtt.**log** 2\>&1  
+  > 0 0 \* \* 0 /home/weewx/backup_scripts/backup_weewx.sh
 
 # ❗ Issues and Fixes
 
