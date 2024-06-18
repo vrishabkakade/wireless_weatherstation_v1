@@ -84,17 +84,18 @@
 
 # 🔭Images
 
-![](media/f8699b2693327e0e36fa073707e493f7.jpeg)![](media/c00aa9a29781a1ecb6856bb5e9e956d3.jpeg)
+Weather Station 
+<img src="media/f8699b2693327e0e36fa073707e493f7.jpeg" width="200" height="300">
 
-Weather Station Mobile Site
-
-![](media/b8037eeb36ba5d8697945c8d8abb314f.png)
+Mobile Site
+<img src="media/c00aa9a29781a1ecb6856bb5e9e956d3.jpeg" width="300" height="650">
 
 Desktop Site
+<img src="media/b8037eeb36ba5d8697945c8d8abb314f.png">
 
 ![](media/d691d1d5c87503a4d4a2ec2b74908eea.jpeg)
 
-Full Desktop Site
+
 
 
 # 📇 Introduction
