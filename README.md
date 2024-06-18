@@ -157,6 +157,7 @@ Table of Contents
 # 📇 Introduction
 
 Links for this project:
+[Working demo of weather station data being displayed in real-time](https://bettaforecast.in)
 
 [vrishabkakade/wireless_weatherstation_v1: This repository contains all the code for the weather station (github.com)](https://github.com/vrishabkakade/wireless_weatherstation_v1)
 
@@ -363,20 +364,23 @@ Using putty or any other terminal application, login. In my case the hostname is
 [Update process hangs during a fresh installation of Raspberry Pi OS - Raspberry Pi Forums](https://forums.raspberrypi.com/viewtopic.php?t=359240)
 
 There’s an issue where the processes can hang and run out of memory as the RAM on the pi zero is just 512M and swap by default is 100M. Increase the swap to 1024M by editing the below file
-
+```
 weewx@bettaforecastpi:\~ \$ sudo vi /etc/dphys-swapfile
-
+```
 change CONF_SWAPSIZE=100 to 1024
 
 Reboot for the changes to take effect.
-
+```
 weewx@bettaforecastpi:\~ \$ sudo reboot
 
+```
 Check for any updates
 
+```
 weewx@bettaforecastpi:\~ \$ sudo apt update
-
 weewx@bettaforecastpi:\~ \$ sudo apt upgrade
+
+```
 
 ### 🔑Setup Private/Public Key for passwordless login (Optional)
 
@@ -388,7 +392,10 @@ Once you have completed the setup, you should be able to login as weewx without 
 
 Run the command
 
+```
 weewx@bettaforecastpi:\~ \$ sudo raspi-config
+
+```
 
 ![](media/2f33236b4f15b12a843489e1af4a2601.png)
 
@@ -404,6 +411,7 @@ Enable SPI, I2C, Serial Port, 1-Wire and Remote GPIO. Click Finish once done.
 
 ### 🛠️Install Pip
 
+```
 weewx@bettaforecastpi:\~ \$ mkdir weather-station/
 
 weewx@bettaforecastpi:\~ \$ cd weather-station/
@@ -412,6 +420,7 @@ weewx@bettaforecastpi:\~/weather-station \$ sudo apt install python3-pip
 
 weewx@bettaforecastpi:\~/weather-station \$ pip --version
 
+```
 pip 23.0.1 from /usr/**lib**/**python3**/**dist**-**packages**/**pip** (**python** 3.11)
 
 We get the below error when we try to install anything with pip.
@@ -437,11 +446,14 @@ Solution: https://www.makeuseof.com/fix-pip-error-externally-managed-environment
 
 Remove the EXTERNALLY-MANAGED EXTERNALLY-MANAGED file
 
+```
 weewx@bettaforecastpi:/usr/lib/python3.11 \$ cd /usr/lib/python3.11
 
 weewx@bettaforecastpi:/usr/lib/python3.11 \$ sudo mv EXTERNALLY-MANAGED EXTERNALLY-MANAGED.orig
 
 weewx@bettaforecastpi:/usr/lib/python3.11 \$ cd \~/weather-station/
+
+```
 
 # 🤖 Setup the Raspberry Pi Pico
 
@@ -526,26 +538,33 @@ Source: [Debian - WeeWX 5.0](https://weewx.com/docs/5.0/quickstarts/debian/)
 
 Tell your system to trust weewx.com.
 
+```
 weewx@bettaforecastpi:\~/weather-station \$ sudo apt install -y wget gnupg
 
 wget -qO - https:*//weewx.com/keys.html \| \\*
 
 sudo gpg --dearmor --output /etc/apt/trusted.gpg.d/weewx.gpg
 
+```
+
 Tell **apt** where to find the WeeWX repository.
 
+```
 weewx@bettaforecastpi:\~/weather-station \$ echo "deb [arch=all] https://weewx.com/apt/python3 buster main" \| \\
 
 sudo tee /etc/apt/sources.list.d/weewx.list
 
+```
 Install
 
 Use **apt** to install WeeWX. The installer will prompt for a location, latitude/longitude, altitude, station type, and parameters specific to your station hardware. When you are done, WeeWX will be running in the background.
 
+```
 sudo apt update
 
 sudo apt install weewx
 
+```
 ![](media/214497614f8ca549116e596db3c3aa81.png)
 
 ![](media/237d73dd96f20805e90cf5e3e62aefb8.png)
@@ -590,10 +609,12 @@ sudo weectl extension BYOWS_RPi_LoRa-v1.zip
 
 To enable the byows_rpi_lora driver modify the weewx.conf file and change the "station_type" variable to "BYOWS_LORA" in the "[Station]" section. Configure the driver by looking for the BYOWS stanza at the end of the file.
 
+```
 weewx@bettaforecastpi:\~ \$ cd /etc/weewx/
 
 weewx@bettaforecastpi:/etc/weewx \$ sudo vi weewx.conf
 
+```
 The driver automatically adds the below parameters.
 
 The sender sends the data every 5 seconds to conserve power. This collection frequency can be altered on the Pico side by changing the sleep to the required time.
@@ -606,15 +627,22 @@ The sender sends the data every 5 seconds to conserve power. This collection fre
 
 Install numpy as the signal strength calculation uses it.
 
+```
 sudo pip3 install numpy
+
+```
 
 ## 👩‍🔧CUSTOMIZATION
 
 I couldn’t get Weewx to run as a non-root user through the service. It works fine from the command line. To run it as root, comment out the user and group from the below file.
 
+
+```
 weewx@bettaforecastpi:/etc/weewx/bin/user \$ sudo cp /lib/systemd/system/weewx.service /lib/systemd/system/weewx.service.orig
 
 weewx@bettaforecastpi:/etc/weewx/bin/user \$ sudo vi /lib/systemd/system/weewx.service
+
+```
 
 Comment  
 \#User=weewx  
@@ -622,12 +650,14 @@ Comment
 
 Reload the service and check the status.
 
+```
 weewx@bettaforecastpi:/etc/weewx/bin/user \$ sudo systemctl daemon-reload
 
 weewx@bettaforecastpi:/etc/weewx/bin/user \$ sudo systemctl start weewx
 
 weewx@bettaforecastpi:/etc/weewx/bin/user \$ sudo systemctl status weewx
 
+```
 At this point, you will get a basic weather station dashboard working with Weewx
 
 ![](media/b153a9f9040eaef53d835bdf9904e5e9.png)
@@ -652,33 +682,44 @@ Create a username called weewx that we will use to install the web server
 
 Source: [How to Create Users in Linux (useradd Command) \| Linuxize](https://linuxize.com/post/how-to-create-users-in-linux-using-the-useradd-command/)
 
+```
 root@cloud009:\~\# useradd weewx
 
 root@cloud009:\~\# id weewx
 
+```
 uid=1000(**weewx**) gid=1000(**weewx**) groups=1000(**weewx**)
 
 Create user password
 
+```
 root@cloud009:\~\# passwd weewx
 
+```
 New password:  
 Retype **new** password:  
 passwd: password updated successfully
 
 Since -m option wasn’t passed when creating the user, run the below command to add home directory for the weewx user
 
+```
 root@cloud009:\~\# mkhomedir_helper weewx
 
+```
 ### 🔳 Change the default shell of weex to bash
 
+```
 \$ echo \$SHELL
 
+```
 /bin/sh
 
+```
 \$ cat /etc/shells
 
-\# /etc/shells: valid login shells  
+\# /etc/shells: valid login shells
+
+```
 /bin/sh  
 /bin/bash  
 /usr/bin/bash  
@@ -690,25 +731,30 @@ root@cloud009:\~\# mkhomedir_helper weewx
 /usr/bin/tmux  
 /usr/bin/screen
 
+```
 \$ chsh
 
+```
 Password:  
 Changing the login shell **for** weewx  
 Enter the new value, **or** press ENTER **for** the default  
  Login Shell [/bin/sh]: /bin/bash
 
+```
 \$ echo \$SHELL
 
+```
 /bin/sh
 
 ### 🔳 CHANGE SHELL COLOR FOR WEEWX TO GREEN
 
 This will help identify if I’ve logged in as root or weewx
 
+```
 weewx@cloud009:\~\$ cp .bashrc .bashrc.orig
-
 weewx@cloud009:\~\$ vi .bashrc
 
+```
 Add the below
 
 export PS1="\\e[0;31m[\\u@\\h \\w]\\\$ \\e[m"  
@@ -716,10 +762,11 @@ source \~/.bashrc
 
 ### 🔳 CHANGE SHELL COLOR FOR ROOT TO RED
 
+```
 root@cloud009:\~\# cp .bashrc .bashrc.orig
-
 root@cloud009:\~\# vi .bashrc
 
+```
 Add the below
 
 export PS1="\\e[0;32m[\\u@\\h \\w]\\\$ \\e[m"  
@@ -758,6 +805,7 @@ Copy the public key to the server.
 
 Login as weewx
 
+```
 [weewx@cloud009 \~]\$ cd \~
 
 [weewx@cloud009 \~]\$ mkdir .ssh
@@ -766,6 +814,7 @@ Login as weewx
 
 [weewx@cloud009 \~/.ssh]\$ vi authorized_keys
 
+```
 Copy the public key generated
 
 ![](media/94e73fcba63ae9570a36800d385f784c.png)
@@ -796,15 +845,19 @@ Source: [How To Create A New Sudo Enabled User on Ubuntu \| DigitalOcean](https:
 
 **weewx**
 
+```
 root@cloud009:\~\# usermod -aG sudo weewx
 
 root@cloud009:\~\# su - weewx
 
+```
 To run **a** command as administrator (user "root"), use "sudo \<command\>".  
 See "man sudo_root" **for** **details**.
 
+```
 [weewx@cloud009 \~]\$ groups
 
+```
 **weewx sudo**
 
 ## 🕸️Install Apache Web Server
@@ -817,10 +870,12 @@ Apache is available within Ubuntu’s default software repositories, making it p
 
 Begin by updating the local package index to reflect the latest upstream changes. Then, install the apache2 package:
 
+```
 [weewx@cloud009 \~]\$ sudo apt update
 
 [weewx@cloud009 \~]\$ sudo apt install apache2
 
+```
 ### 🧱[Step 2 — Adjusting the Firewall](https://www.digitalocean.com/community/tutorials/how-to-install-the-apache-web-server-on-ubuntu-22-04#step-2-adjusting-the-firewall)
 
 Before testing Apache, it’s necessary to modify the firewall settings to allow outside access to the default web ports. If you followed the instructions in the prerequisites, you should have a UFW firewall configured to restrict access to your server.
@@ -829,8 +884,10 @@ During installation, Apache registers itself with UFW to provide a few applicati
 
 List the ufw application profiles by running the following:
 
+```
 [weewx@cloud009 \~]\$ sudo ufw app list
 
+```
 Available applications:  
  Apache  
  Apache Full  
@@ -845,15 +902,19 @@ As indicated by the output, there are three profiles available for Apache:
 
 Allow on HTTP and HTTPS
 
+```
 [weewx@cloud009 \~]\$ sudo ufw allow 'Apache Full'
 
+```
 Rules updated  
 Rules updated (**v6**)
 
 Firewall isn’t active
 
+```
 [weewx@cloud009 \~]\$ sudo ufw status
 
+```
 Status: inactive
 
 ### 🖥️[Step 3 — Checking your Web Server](https://www.digitalocean.com/community/tutorials/how-to-install-the-apache-web-server-on-ubuntu-22-04#step-3-checking-your-web-server)
@@ -862,8 +923,10 @@ At the end of the installation process, Ubuntu starts Apache. The web server wil
 
 Make sure the service is active by running the command for the systemd init system:
 
+```
 [weewx@cloud009 \~]\$ sudo systemctl status apache2
 
+```
 ● apache2.service - The Apache HTTP Server  
  Loaded: loaded (/lib/systemd/system/apache2.service; enabled; vendor preset: enabled)  
  Active: active (running) since Fri 2024-04-12 06:06:06 UTC; 3min 12s ago  
@@ -891,22 +954,28 @@ Now that you have your web server up and running, let’s review some basic mana
 
 To stop, start and restart your web server, run:
 
+```
 sudo systemctl stop apache2
 
 sudo systemctl start apache2
 
 sudo systemctl restart apache2
 
+```
 If you are simply making configuration changes, Apache can often reload without dropping connections. To do this, use the following command:
 
+```
 sudo systemctl reload apache2
 
+```
 By default, Apache is configured to start automatically when the server boots. If this is not what you want, disable this behavior by running: (Next command is to enable)
 
+```
 sudo systemctl disable apache2
 
 sudo systemctl enable apache2
 
+```
 ### 💻Setup the domain name to point to the server
 
 Source: [How to Point a Domain Name to VPS (hostinger.in)](https://www.hostinger.in/tutorials/dns/how-to-point-domain-to-vps?ppc_campaign=google_search_generic_hosting_all&bidkw=defaultkeyword&lo=9183213&gad_source=1&gclid=CjwKCAjwt-OwBhBnEiwAgwzrUi-3cF_HY1wTfmwWbqozF5o4wLp7YHXWF69k6tubTihCKGxrevHKAxoCDwQQAvD_BwE)
@@ -940,16 +1009,20 @@ Apache on Ubuntu has one server block enabled by default that is configured to s
 
 The permissions of your web root should be correct if you haven’t modified your umask value, which sets default file permissions. To ensure that your permissions are correct and allow the owner to read, write, and execute the files while granting only read and execute permissions to groups and others, you can input the following command:
 
+```
 [weewx@cloud009 \~]\$ sudo mkdir /var/www/bettaforecast
 
 [weewx@cloud009 \~]\$ sudo chown -R \$USER:\$USER /var/www/bettaforecast/
 
 [weewx@cloud009 \~]\$ sudo chmod -R 755 /var/www/bettaforecast/
 
+```
 Next, create a sample index.html page
 
+```
 [weewx@cloud009 \~]\$ sudo vi /var/www/bettaforecast/index.html
 
+```
 \<**html**\>  
  \<**head**\>  
  \<**title**\>Welcome to Betta Forecast!\</**title**\>  
@@ -961,8 +1034,10 @@ Next, create a sample index.html page
 
 In order for Apache to serve this content, it’s necessary to create a virtual host file with the correct directives. Instead of modifying the default configuration file located at /etc/apache2/sites-available/000-default.conf directly, make a new one at /etc/apache2/sites-available/bettaforecast.conf:
 
+```
 [weewx@cloud009 \~]\$ sudo vi /etc/apache2/sites-available/bettaforecast.conf
 
+```
 \<VirtualHost \*:80\>  
  ServerAdmin vrishabkakade@gmail.com  
  ServerName bettaforecast.in  
@@ -978,31 +1053,39 @@ Save and close the file when you are finished.
 
 Now enable the file with the a2ensite tool:
 
+```
 [weewx@cloud009 \~]\$ sudo a2ensite bettaforecbettaforecast.conf
 
+```
 Enabling site bettaforecast.  
 **To** activate the **new** **configuration**, you need **to** run:  
  systemctl reload apache2
 
 Disable the default site defined in 000-default.conf:
 
+```
 [weewx@cloud009 \~]\$ sudo a2dissite 000-default.conf
 
+```
 Site 000-**default** disabled.  
 **To** activate the **new** **configuration**, you need **to** run:  
  systemctl reload apache2
 
 Next, test for configuration errors:
 
+```
 [weewx@cloud009 \~]\$ sudo apache2ctl configtest
 
+```
 AH00558: apache2: Could **not** reliably determine the server's fully qualified domain name, using cloud009.annaiservers.com. Set the 'ServerName' directive globally to suppress this message  
 Syntax OK
 
 Restart Apache to implement your changes:
 
+```
 [weewx@cloud009 \~]\$ sudo systemctl restart apache2
 
+```
 ### 🗃️[Step 6 – Getting Familiar with Important Apache Files and Directories](https://www.digitalocean.com/community/tutorials/how-to-install-the-apache-web-server-on-ubuntu-22-04#step-6-getting-familiar-with-important-apache-files-and-directories)
 
 Now that you know how to manage the Apache service itself, you should take a few minutes to familiarize yourself with a few important directories and files.
@@ -1072,12 +1155,14 @@ Valid values are **1** to enable and **0** to disable. Required. Default is **0*
 
 The weather station Raspberry Pi needs to login without a password to the webserver. I will set it up for root as I run Weewx as root. I couldn’t get it to run as non-root user even though it is supported.
 
+```
 vrishabkakade@freedompi.local:\~/.ssh\$ sudo su
 
 root@freedompi:/home/vrishabkakade/.ssh*\# cd \~*
 
 root@freedompi:\~\# ls -lrat
 
+```
 total 40  
 \-rw-r--r-- 1 root root 161 Jul 9 2019 .profile  
 \-rw-r--r-- 1 root root 571 Apr 11 2021 .bashrc  
@@ -1090,19 +1175,23 @@ drwxr-xr-x 18 root root 4096 Apr 9 20:48 ..
 \-rw------- 1 root root 20 Apr 9 20:48 .lesshst  
 drwx------ 5 root root 4096 Apr 9 20:48 .
 
+```
 root@freedompi:\~\# cd .ssh
 
 root@freedompi:\~/.ssh*\# vi config*
 
+```
 Host bettaforecat.**in**  
  HostName bettaforecast.**in**  
  User weewx  
  IdentityFile \~/.ssh/id_rsa
 
+```
 root@freedompi:\~/.ssh\# chmod 600 \~/.ssh/config
 
 root@freedompi:\~/.ssh*\# ssh-keygen*
 
+```
 Generating public/private rsa key pair.  
 Enter file in which to save the key (/root/.ssh/id_rsa):   
 Enter passphrase (empty for no passphrase):   
@@ -1114,22 +1203,26 @@ Login to bettaforecast.in
 
 On remote server, add the public key
 
+```
 [weewx@cloud009 /var/www/bettaforecast]\$ cd
 
 [weewx@cloud009 \~]\$ cd .ssh/
 
 [weewx@cloud009 \~/.ssh]\$ vi authorized_keys
 
+```
 Add the public key
 
 ### 🔛ENABLE RSYNC
 
 Back on the Raspberry Pi
 
+```
 vrishabkakade@freedompi:\~ \$ cd /etc/weewx/
 
 vrishabkakade@freedompi:/etc/weewx \$ cp weewx.conf weewx.conf.\`date +%Y%m%d\`
 
+```
 Under [StdReport]  
   
  [[RSYNC]]  
@@ -1163,10 +1256,12 @@ Under [StdReport]
  \# deletion, zero to allow files to accumulate remotely.  
  delete = 0
 
+```
 vrishabkakade@freedompi:/etc/weewx \$ sudo systemctl restart weewx
 
 vrishabkakade@freedompi:/etc/weewx \$ sudo systemctl status weewx
 
+```
 ● weewx.service - WeeWX  
  Loaded: loaded (/lib/systemd/system/weewx.service; enabled; preset: enabled)  
  Active: active (running) since Fri 2024-04-12 16:09:48 IST; 5s ago  
@@ -1215,10 +1310,12 @@ To follow this tutorial, you will need:
 
 To obtain an SSL certificate with Let’s Encrypt, you need to install the Certbot software on your server. You’ll use the default Ubuntu package repositories for that.
 
+```
 [weewx@cloud009 \~]\$ sudo apt update
 
 [weewx@cloud009 \~]\$ sudo apt isudo apt install certbot python3-certbot-apache
 
+```
 Certbot is now installed on your server. In the next step, you’ll verify Apache’s configuration to make sure your virtual host is set appropriately. This will ensure that the certbot client script will be able to detect your domains and reconfigure your web server to use your newly generated SSL certificate automatically.
 
 ### 🖥️[Step 2 — Checking your Apache Virtual Host Configuration](https://www.digitalocean.com/community/tutorials/how-to-secure-apache-with-let-s-encrypt-on-ubuntu#step-2-checking-your-apache-virtual-host-configuration)
@@ -1227,15 +1324,19 @@ To automatically obtain and configure SSL for your web server, Certbot needs to 
 
 If you followed the [virtual host setup step in the Apache installation tutorial](https://www.digitalocean.com/community/tutorials/how-to-install-the-apache-web-server-on-ubuntu-22-04#step-5-setting-up-virtual-hosts-recommended), you should have a VirtualHost block set up for your domain at /etc/apache2/sites-available/bettaforecast.conf with the ServerName and also the ServerAlias directives already set appropriately.
 
+```
 [weewx@cloud009 \~]\$ sudo apache2ctl configtest
 
+```
 AH00558: apache2: Could **not** reliably determine the server's fully qualified domain name, using cloud009.annaiservers.com. Set the 'ServerName' directive globally to suppress this message  
 Syntax OK
 
 You should receive Syntax OK as a response. If you get an error, reopen the virtual host file and check for any typos or missing characters. Once your configuration file’s syntax is correct, reload Apache so that the changes take effect:
 
+```
 [weewx@cloud009 \~]\$ sudo systemctl reload apache2
 
+```
 With these changes, Certbot will be able to find the correct VirtualHost block and update it.
 
 Next, you’ll update the firewall to allow HTTPS traffic.
@@ -1246,8 +1347,10 @@ SKIP SETP 3 as no FIREWALL
 
 Certbot provides a variety of ways to obtain SSL certificates through plugins. The Apache plugin will take care of reconfiguring Apache and reloading the configuration whenever necessary. To use this plugin, run the following:
 
+```
 [weewx@cloud009 \~]\$ sudo certbot –apache
 
+```
 Saving debug log to /var/log/letsencrypt/letsencrypt.log  
 Enter email address (used **for** urgent renewal **and** security notices)  
  (Enter 'c' to cancel): vrishabkakade@gmail.com  
@@ -1311,8 +1414,10 @@ The certbot package you installed takes care of renewals by including a renew sc
 
 To check the status of this service and make sure it’s active, run the following:
 
+```
 [weewx@cloud009 \~]\$ sudo systesudo systemctl status certbot.timer
 
+```
 ● certbot.timer - Run certbot twice daily  
  Loaded: loaded (/lib/systemd/system/certbot.timer; enabled; vendor preset: enabled)  
  Active: active (waiting) since Fri 2024-04-12 10:55:33 UTC; 11min ago  
@@ -1323,8 +1428,10 @@ Apr 12 10:55:33 cloud009.annaiservers.com systemd[1]: Started Run certbot twice 
 
 To test the renewal process, you can do a dry run with certbot:
 
+```
 [weewx@cloud009 \~]\$ sudo certbot renew --dry-run
 
+```
 Saving debug log to /var/log/letsencrypt/letsencrypt.log  
   
 \- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
@@ -1350,12 +1457,14 @@ Source: [Home · evilbunny2008/weeWXWeatherApp Wiki · GitHub](https://github.co
 
 This has to be done on the Raspberry Pi as that is where Weewx is installed.
 
+```
 vrishabkakade@freedompi:\~ \$ cd /tmp
 
 vrishabkakade@freedompi:/tmp \$ wget -O inigo-metric.tar.gz https://github.com/evilbunny2008/weeWXWeatherApp/releases/download/1.0.17/inigo-metric.tar.gz
 
 vrishabkakade@freedompi:/tmp \$ sudo weectl extension install inigo-metric.tar.gz
 
+```
 **Using** **configuration** file /etc/weewx/weewx.conf  
 Install **extension** 'inigo-metric.tar.gz' (y/n)? y  
 Extracting **from** tar archive inigo-metric.tar.gz  
@@ -1367,14 +1476,18 @@ Finished installing **extension** Inigo **from** inigo-metric.tar.gz
 
 If you would like to see moon rise/set in the app, you just need to install pyephem.
 
+```
 sudo apt -y install python3-ephem
 
+```
 ### 🔂Step 3, Restarting weeWX
 
+```
 vrishabkakade@freedompi:/tmp \$ sudo systemctl restart weewx
 
 vrishabkakade@freedompi:/tmp \$ sudo systemctl status weewx
 
+```
 ● weewx.service - WeeWX  
  Loaded: loaded (/lib/systemd/system/weewx.service; enabled; preset: enabled)  
  Active: active (running) since Fri 2024-04-12 18:28:42 IST; 7s ago  
@@ -1402,12 +1515,14 @@ You need to change the inigo-settings.txt to provide details about your weather 
 
 Once you're happy with your changes press ctrl+x to exit and save.
 
+```
 vrishabkakade@freedompi:/tmp \$ sudo wget -O /var/www/html/weewx/inigo-settings.txt https:*//github.com/evilbunny2008/weeWXWeatherApp/releases/download/1.0.3/inigo-settings.txt*
 
 vrishabkakade@freedompi:/tmp \$ sudo vi /var/www/html/weewx/inigo-settings.txt
 
 [weewx@cloud009 \~]\$ cat /var/www/bettaforecast/inigo-settings.txt
 
+```
 data=https://bettaforecast.in/inigo-data.txt  
 radtype=image  
 radar=https://embed.windy.com/embed2.html?lat=-34&lon=151&zoom=11&level=surface&overlay=radar&menu=&message=true&marker=&calendar=&pressure=true&type=map&location=coordinates&detail=&detailLat=-34&detailLon=150&metricWind=km%2Fh&metricTemp=**%C2%B0C**\&radarRange=-1  
@@ -1420,8 +1535,10 @@ forecast=https://api.met.no/weatherapi/locationforecast/2.0/compact?altitude=118
 
 Historically rainfall is measured in Australia at 9am, so it's useful for comparison reasons to be able to display rain records matching time of day with the [Bureau of Meteorology](http://www.bom.gov.au/). To enable this simply edit /etc/weewx/since.tmpl and paste the following into it:
 
+```
 vrishabkakade@freedompi:/etc/weewx \$ vi /etc/weewx/since.tmpl
 
+```
 \#if \$varExists('since')  
 \$since(\$hour=9).rain.**sum**.formatted\|\$since(\$hour=9,\$today=False).rain.**sum**.formatted\|9am\|\#slurp  
 \#else  
@@ -1462,10 +1579,12 @@ Following the instructions on the website, I obtain my key.
 
 1.  Download [the latest release](https://github.com/poblabs/weewx-belchertown/releases).
 
+```
 vrishabkakade@freedompi:/tmp \$ wget https://github.com/poblabs/weewx-belchertown/releases/download/weewx-belchertown-1.3.1/weewx-belchertown-release.1.3.1.tar.gz
 
 vrishabkakade@freedompi:\~ \$ sudo weectl extension install weewx-belchertown-release.1.3.1.tar
 
+```
 Using **configuration** **file** /etc/weewx/weewx.conf  
 Install extension 'weewx-belchertown-**release**.1.3.1.tar' (y/n)? y  
 Traceback (most recent call last):  
@@ -1483,10 +1602,12 @@ weecfg.extension.InstallError: Unrecognized **type** **for** weewx-belchertown-*
 
 v1.3.1 Threw errors constantly. So I installed 1.3
 
-wget <https://github.com/poblabs/weewx-belchertown/releases/download/weewx-belchertown-1.3/weewx-belchertown-release-1.3.tar.gz>
+```
+wget https://github.com/poblabs/weewx-belchertown/releases/download/weewx-belchertown-1.3/weewx-belchertown-release-1.3.tar.gz
 
 vrishabkakade@freedompi:/tmp \$ sudo weectl extension install weewx-belchertown-release-1.3.tar.gz
 
+```
 **Using** **configuration** file /etc/weewx/weewx.conf  
 Install **extension** 'weewx-belchertown-release-1.3.tar.gz' (y/n)? y  
 Extracting **from** tar archive weewx-belchertown-**release**-1.3.tar.gz  
@@ -1496,6 +1617,7 @@ Finished installing **extension** Belchertown **from** weewx-belchertown-**relea
 
 Since I installed as sudo it changed it to root. Change permissions to weewx user
 
+```
 vrishabkakade@freedompi:/tmp \$ cd /etc/weewx/
 
 vrishabkakade@freedompi:/etc/weewx \$ sudo chown weewx:weewx weewx.conf
@@ -1506,6 +1628,7 @@ vrishabkakade@freedompi:\~ \$ sudo systemctl restart weewx
 
 vrishabkakade@freedompi:\~ \$ sudo systemctl status weewx
 
+```
 I got the below error after the installation
 
 **Uncaught** **TypeError**: **Highcharts**.chart **is** **not** **a** **constructor**  
@@ -1521,8 +1644,10 @@ I got the below error after the installation
 
 I changed the code like this:
 
+```
 vrishabkakade@freedompi:/etc/weewx/skins/Belchertown/js \$ ls -lrat
 
+```
 total 304  
 \-rw-rw-r-- 1 weewx weewx 765 Apr 13 11:49 responsive-menu.js  
 \-rw-rw-r-- 1 weewx weewx 14 Apr 13 11:49 index.html  
@@ -1531,8 +1656,10 @@ drwxr-sr-x 11 weewx weewx 4096 Apr 13 14:12 ..
 drwxr-sr-x 2 weewx weewx 4096 Apr 13 14:51 .  
 \-rw-rw-r-- 1 weewx weewx 143973 Apr 13 14:58 belchertown.js.tmpl
 
+```
 vrishabkakade@freedompi:/etc/weewx/skins/Belchertown/js \$ vi belchertown.js.tmpl
 
+```
 Line 2895 comment and duplicate – remove new word as per the solution
 
 *// Finally all options are done, now show the chart*
@@ -1551,24 +1678,30 @@ The first thing that we must do before we setup a SMB/CIFS share on our Raspberr
 
 We can update the package list and all our packages by running the following two commands.
 
+```
 sudo apt-get update
 
 sudo apt-get upgrade
 
+```
 Now that we have our Raspbian operating system entirely up to date, we can now proceed on to installing the Samba software to our Raspberry Pi.
 
 We can install the packages that we require to setup Samba by running the following command.
 
+```
 sudo apt-get install samba samba-common-bin
 
+```
 Now we can share this folder using the Samba software. To do this, we need to modify the samba config file.
 
 The “smb.conf” configuration file is where you will store all your settings for your shares.
 
 We can begin modifying the config file by running the command below.
 
+```
 sudo vi /etc/samba/smb.conf
 
+```
 [freedompishare]  
 path = /var/lib/weewx  
 **writeable**=Yes  
@@ -1578,12 +1711,16 @@ directory **mask**=0777
 
 Next, we need to set up a user for our Samba share on the Raspberry Pi. Without it, we won’t be able to make a connection to the shared network drive.
 
+```
 vrishabkakade@freedompi:/etc/weewx/skins/Belchertown \$ sudo smbpasswd -a weewx
 
+```
 Finally, before we connect to our Raspberry Pi Samba share, we need to restart the samba service so that it loads in our configuration changes.
 
+```
 sudo systemctl restart smbd
 
+```
 ### 🪈 MQTT and MQTT Websockets (optional)
 
 Source: [How to setup your own MQTT Broker – O'Brien Labs (obrienlabs.net)](https://obrienlabs.net/how-to-setup-your-own-mqtt-broker/)
@@ -1616,10 +1753,12 @@ Running this on the virtual server
 
 First install Mosquitto, which is the name of the MQTT software.
 
+```
 [weewx@cloud009 \~]\$ sudo apt update
 
 [weewx@cloud009 \~]\$ sudo apt-get install mosquitto mosquitto-clients
 
+```
 *Note: Do not use 'localhost'. Use the fully qualified domain name of the MQTT broker host or its IP address.*
 
 *Source:* [*MQTT for Belchertown skin (google.com)*](https://groups.google.com/g/weewx-user/c/V5QYIeUNNJ4)
@@ -1630,8 +1769,10 @@ If you plan on using your MQTT Broker for a website, like the [Belchertown weewx
 
 Let’s create a custom configuration file that we’ll add this – and other items – to for Mosquitto’s config. Run sudo nano /etc/mosquitto/conf.d/myconfig.conf and update it with the below:
 
+```
 [weewx@cloud009 \~]\$ sudo vi /etc/mosquitto/conf.d/myconfig.con
 
+```
 persistence false  
   
 \# mqtt  
@@ -1646,18 +1787,24 @@ Make sure you have no empty spaces at the end of those lines or Mosquitto may gi
 
 Restart Mosquitto with sudo service mosquitto restart and you should now have a working MQTT server on port 1883 and websockets on port 9001!
 
+```
 [weewx@cloud009 \~]\$ sudo service mosquitto restart
 
+```
 #### Create a user and access control
 
 I locked down my broker so that only those clients who know the password can publish to a topic. You can get super granular here where certain usernames can publish to certain topics only. For my sake I only have 1 user who can publish. All other users who connect to the broker are considered anonymous and can only subscribe. Create a password for publishing with:
 
+```
 [weewx@cloud009 \~]\$ sudo mosqusudo mosquitto_passwd -c /etc/mosquitto/passwd weewx
 
+```
 Next is to create an MQTT ACL (access control list) so that anonymous users are read only, but the weewx system can read and write to the weather topic. Run sudo nano /etc/mosquitto/acl and enter in:
 
+```
 [weewx@cloud009 \~]\$ sudo vi /etc/mosquitto/acl
 
+```
 \# Allow anonymous access to the sys  
 topic read \$SYS/\#  
   
@@ -1672,8 +1819,10 @@ topic weather/\#
 
 Now let’s add the authentication and access control to the custom configuration file. Run sudo nano /etc/mosquitto/conf.d/myconfig.conf and enter in:
 
+```
 [weewx@cloud009 \~]\$ sudo vi /etc/mosquitto/conf.d/myconfig.conf
 
+```
 allow_anonymous **true**  
 password_file /etc/mosquitto/passwd  
   
@@ -1685,41 +1834,49 @@ tcp 0 0 127.0.0.1:1883 0.0.0.0:\* LISTEN 973/mosquitto
 
 If it’s open like above then open 2 more SSH connections to your server to test publish and subscribe.
 
+```
 [weewx@cloud009 \~]\$ sudo mosquitto -c /etc/mosquitto/mosquitto.conf
 
 [weewx@cloud009 \~]\$ sudo netstat -tulpn \| grep 1883
 
+```
 tcp 0 0 127.0.0.1:1883 0.0.0.0:\* LISTEN 114850/mosquitto  
 tcp6 0 0 ::1:1883 :::\* LISTEN 114850/mosquitto
 
 Session 1: run this command to subscribe to the weather topic.
 
+```
 mosquitto_sub -h localhost -t weather/\#
 
+```
 The \# means you want to listen on everything underneath weather. For example weather/topic1, weather/topic2, weather/topic3, etc.
 
 Note: Only use \# when troubleshooting. You shouldn’t setup your website or application to publish or subscribe to \# in a normal situation.
 
 Session 2: try to publish using this command:
 
+```
 mosquitto_pub -h localhost -t "weather/test" -m "hello world"\`
 
 [weewx@cloud009 \~]\$ mosquitto_mosquitto_pub -h localhost -t "weather/test" -m "hello world"
 
 [weewx@cloud009 \~]\$ mosquitto_sub -h localhost -t weather/\#
 
+```
 **hello world**
 
 This command does not use any authentication so **it should fail**! Your mosquitto_sub window should not show anything. If you do not see anything, so far so good!
 
 Now go back to SSH \#2 (with the mosquitto_pub) and run this command which has authentication:
 
+```
 mosquitto_pub -h localhost -t "weather/test" -m "hello world. this is to the weather topic with authentication" -u "\<your username from above\>" -P "\<your password you created\>"
 
 [weewx@cloud009 \~]\$ mosquitto_mosquitto_pub -h localhost -t "weather/test" -m "hello world. this is to the weather topic with authentication" -u "weewx" -P "\*\*\*\*"
 
 [weewx@cloud009 \~]\$ mosquitto_sub -h localhost -t weather/\#
 
+```
 hello world  
 hello world. **this** **is** **to** the weather topic **with** authentication
 
@@ -1735,8 +1892,10 @@ Using the SSL cert setup with the website
 
 Update your custom MQTT config file and add the new SSL certificates. Run sudo nano /etc/mosquitto/conf.d/myconfig.conf and update it with the below:
 
+```
 [weewx@cloud009 \~]\$ sudo vi /etc/mosquitto/conf.d/myconfig.conf
 
+```
 allow_anonymous true  
 password_file /etc/mosquitto/passwd  
   
@@ -1759,8 +1918,10 @@ certfile /etc/mosquitto/certs/cert.pem
 cafile /etc/mosquitto/certs/chain.pem  
 keyfile /etc/mosquitto/certs/privkey.pem
 
+```
 [weewx@cloud009 \~]\$ sudo ls -lrat /etc/letsencrypt/archive/bettaforecast.in
 
+```
 total 24  
 \-rw------- 1 root root 1704 Apr 12 16:35 privkey1.pem  
 \-rw-r--r-- 1 root root 3595 Apr 12 16:35 fullchain1.pem  
@@ -1778,8 +1939,10 @@ I get the below error with the above permissions
 
 Copy the certificates to a new location and change permissions there so that we don’t affect the Apache Letsencrypt certificates.
 
+```
 [root@cloud009 \~]\$ cat /etc/mosqu/etc/mosquitto/certs/copy_ssl_certs_mqtt.sh
 
+```
 \#!/bin/bash  
 SHELL=/bin/bash  
 export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:\$PATH  
@@ -1790,17 +1953,21 @@ cp /etc/letsencrypt/live/bettaforecast.**in**/cert.pem /etc/mosquitto/certs
 
 Put it in the crontab so the script can run everyday.
 
+```
 [root@cloud009 \~]\$ crontab -l
 
+```
 52 \* \* \* \* cd /etc/mosquitto/certs && /**usr**/bin/sh /etc/mosquitto/certs/copy_ssl_certs_mqtt.sh \>\> /etc/mosquitto/certs/copy_ssl_certs_mqtt.**log** 2\>&1  
 0 0 \* \* 0 /home/weewx/backup_scripts/backup_weewx.sh
 
 Restart your mosquitto server with sudo service mosquitto restart and check that the ports are open with sudo netstat -tulpn \| grep -E '8883\|9001'. You should see something similar to:
 
+```
 [weewx@cloud009 /etc/mosquitto/certs]\$ sudo service mosquitto restart
 
 [weewx@cloud009 /etc/mosquitto/certs]\$ sudo netstat -tulpn \| grep -E '8883\|9001'
 
+```
 tcp 0 0 0.0.0.0:8883 0.0.0.0:\* LISTEN 123262/mosquitto  
 tcp6 0 0 :::9001 :::\* LISTEN 123262/mosquitto  
 tcp6 0 0 :::8883 :::\* LISTEN 123262/mosquito
@@ -1809,24 +1976,30 @@ tcp6 0 0 :::8883 :::\* LISTEN 123262/mosquito
 
 We need Mosquito installed on the Raspberry Pi as well since the messages get sent in real-time from the Raspberry Pi to the web server.
 
+```
 weewx@freedompi:\~\$ sudo apt update
 
 weewx@freedompi:\~\$ sudo apt-get install mosquitto mosquitto-clients
 
 weewx@freedompi:\~\$ sudo service mosquitto start
 
+```
 Test it
 
+```
 mosquitto_pub -h bettaforecast.in -t "weather/test" -m "hello world. this is to the weather topic with authentication 2" -u "weewx" -P "\*\*\*"
 
+```
 #### Customize the Graphs
 
 Source: [Belchertown Charts Documentation · poblabs/weewx-belchertown Wiki (github.com)](https://github.com/poblabs/weewx-belchertown/wiki/Belchertown-Charts-Documentation#zindex)
 
 The document is very well written and I have made a lot of customizations. Refer to the below file
 
+```
 weewx@freedompi:/etc/weewx/skins/Belchertown\$ ls -lrat graphs.conf
 
+```
 \-rw-r--r-- 1 weewx weewx 23308 Apr 17 09:40 graphs.conf
 
 #### SCRIPT TO AUTOMATE COPYING OF CERTS FOR MQTT
@@ -1835,8 +2008,10 @@ Below is a script to automate copying over the SSL certs to MQTT
 
 Source certs
 
+```
 [weewx@cloud009 \~]\$ sudo ls -lrat /etc/letsencrypt/live/bettaforecast.in
 
+```
 total 12  
 lrwxrwxrwx 1 root root 43 Apr 12 16:35 privkey.pem -\> ../../archive/bettaforecast.**in**/privkey1.pem  
 lrwxrwxrwx 1 root root 45 Apr 12 16:35 fullchain.pem -\> ../../archive/bettaforecast.**in**/fullchain1.pem  
@@ -1848,8 +2023,10 @@ drwxr-xr-x 2 root root 4096 Apr 12 16:35 .
 
 MQTT Certs
 
+```
 [weewx@cloud009 \~]\$ ls -lrat /etc/mosquitto/certs
 
+```
 total 28  
 \-rw-r--r-- 1 weewx weewx 130 Nov 19 23:39 README  
 drwxr-xr-x 5 root root 4096 Apr 14 08:43 ..  
@@ -1859,10 +2036,12 @@ drwxr-xr-x 5 root root 4096 Apr 14 08:43 ..
 \-rwxr-xr-- 1 weewx weewx 1769 Apr 14 10:24 cert.pem  
 drwxr-xr-x 2 weewx weewx 4096 Apr 14 22:38 .
 
+```
 [weewx@cloud009 \~]\$ cd /etc/mosquitto/certs
 
 [weewx@cloud009 /etc/mosquitto/certs]\$ vi copy_ssl_certs_mqtt.sh
 
+```
 \#!/bin/bash  
 SHELL=/bin/bash  
 export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:\$PATH  
@@ -1871,21 +2050,27 @@ cp /etc/letsencrypt/live/bettaforecast.**in**/fullchain.pem /etc/mosquitto/certs
 cp /etc/letsencrypt/live/bettaforecast.**in**/chain.pem /etc/mosquitto/certs  
 cp /etc/letsencrypt/live/bettaforecast.**in**/cert.pem /etc/mosquitto/certs
 
+```
 [weewx@cloud009 /etc/mosquitto/certs]\$ chmod 755 copy_ssl_certs_mqtt.sh
 
 [root@cloud009 \~]\$ crontab -e
 
+```
 \# m h dom mon dow command  
 52 \* \* \* \* cd /etc/mosquitto/certs && /usr/bin/sh /etc/mosquitto/certs/copy_ssl_certs_mqtt.sh \>\> /etc/mosquitto/certs/copy_ssl_certs_mqtt.log 2\>&1
 
 In my case I had to restart cron. No jobs were running from any user.
 
+```
 [root@cloud009 /etc/mosquitto/certs]\$ sudo systemctl restart cron
 
+```
 Copy the certs to the raspberry pi as well
 
+```
 weewx@bettaforecastpi:/tmp/certs \$ ls -lrat /etc/mosquitto/certs
 
+```
 total 28  
 drwxr-xr-x 5 root root 4096 May 9 20:05 ..  
 \-rwxr-xr-x 1 weewx weewx 1826 May 9 20:16 chain.pem  
@@ -1899,24 +2084,28 @@ drwxr-xr-x 2 root root 4096 May 9 20:17 .
 
 Source: [mqtt · weewx/weewx Wiki (github.com)](https://github.com/weewx/weewx/wiki/mqtt)
 
+```
 weewx@freedompi:\~\$ sudo pip3 install paho-mqtt==1.6.1
 
 weewx@freedompi:\~\$ wget -O weewx-mqtt.zip https:*//github.com/matthewwall/weewx-mqtt/archive/master.zip*
 
 weewx@freedompi:\~\$ sudo weectl extension install weewx-mqtt.zip
 
+```
 ## Windy (Optional)
 
 Source: [matthewwall/weewx-windy: uploader for windy.com (github.com)](https://github.com/matthewwall/weewx-windy)
 
 Install this extension if you want to upload your data to Windy.com
 
+```
 weewx@bettaforecastpi:/var/lib/weewx \$ cd /tmp
 
 weewx@bettaforecastpi:/tmp \$ wget -O weewx-windy.zip https://github.com/matthewwall/weewx-windy/archive/master.zip
 
 weewx@bettaforecastpi:/tmp \$ sudo weectl extension install weewx-windy.zip
 
+```
 ## 🕸️ Sitemap (Optional)
 
 Sources:
@@ -1971,8 +2160,10 @@ Below is my script for backups
 
 On the Pi:
 
+```
 vrishabkakade@freedompi:\~/backup_scripts \$ cat backup_weewx.sh
 
+```
 cd /mnt/backup  
 sudo touch weewx_bkp_\`hostname\`_\`date +%Y%m%d\`.log  
 sudo chmod 777 weewx_bkp_\`hostname\`_\`date +%Y%m%d\`.log  
@@ -1987,12 +2178,15 @@ fi
 
 I run it once a week
 
+```
 vrishabkakade@freedompi:\~ \$ crontab -l
 
+```
 0 0 \* \* 0 /home/vrishabkakade/backup_scripts/backup_weewx.sh
 
 ON WEB SERVER
 
+```
 [weewx@cloud009 \~]\$ cd backup_scripts/
 
 [weewx@cloud009 \~/backup_scripts]\$ vi backup_weewx.sh
@@ -2005,6 +2199,7 @@ ON WEB SERVER
 
 [weewx@cloud009 \~/backup_scripts]\$ cat backup_weewx.sh
 
+```
 cd /mnt/backup  
 sudo touch weewx_bkp_\`hostname\`_\`date +%Y%m%d\`.log  
 sudo chmod 777 weewx_bkp_\`hostname\`_\`date +%Y%m%d\`.log  
@@ -2019,8 +2214,10 @@ fi
 
 I have to run it as root as it keeps prompting for sudo password otherwise
 
+```
 [root@cloud009 \~]\$ crontab -l
 
+```
 52 \* \* \* \* cd /etc/mosquitto/certs && /**usr**/bin/sh /etc/mosquitto/certs/copy_ssl_certs_mqtt.sh \>\> /etc/mosquitto/certs/copy_ssl_certs_mqtt.**log** 2\>&1  
 0 0 \* \* 0 /home/weewx/backup_scripts/backup_weewx.sh
 
