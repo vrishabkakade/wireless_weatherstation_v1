@@ -1,158 +1,101 @@
-Table of Contents
-
-[📝Document Control](#document-control)
-
-[📇 Introduction](#-introduction)
-
-[💫Project Outline:](#project-outline)
-
-[🧑‍🏭Architecture](#architecture)
-
-[🤔Future Enhancements:](#future-enhancements)
-
-[✏️Data Accessibility:](#data-accessibility)
-
-[🎯Motivation:](#motivation)
-
-[🧪Implementation:](#implementation)
-
-[**💻Hardware Setup**:](#_Toc169602807)
-
-[🔳 **Software Setup**:](#_Toc169602808)
-
-[💻 Hardware Used](#-hardware-used)
-
-[🔳 Softwares](#-softwares)
-
-[🔗References And Credits](#references-and-credits)
-
-[🤖 Setup the Raspberry Pi](#-setup-the-raspberry-pi)
-
-[💿Flashing the Image](#flashing-the-image)
-
-[🖥️Configure the OS](#configure-the-os)
-
-[🔳 Check for Updates](#-check-for-updates)
-
-[🔑Setup Private/Public Key for passwordless login (Optional)](#setup-privatepublic-key-for-passwordless-login-optional)
-
-[🛠️Configure the Pi to enable certain options](#configure-the-pi-to-enable-certain-options)
-
-[🛠️Install Pip](#install-pip)
-
-[🤖 Setup the Raspberry Pi Pico](#-setup-the-raspberry-pi-pico)
-
-[💿Flashing the Image](#flashing-the-image-1)
-
-[🌡️ Setup the Weather Station](#-setup-the-weather-station)
-
-[🎐 Setup the Weather Meter](#-setup-the-weather-meter)
-
-[🎐 Connect the sensors and LoRa to Pico - Sender](#-connect-the-sensors-and-lora-to-pico---sender)
-
-[🎐 Connect LoRa to Pi - Receiver](#-connect-lora-to-pi---receiver)
-
-[🔳 Setup the software code (Program)](#-setup-the-software-code-program)
-
-[🛠️Pico](#pico)
-
-[🖥️Install Weewx](#install-weewx)
-
-[👩‍🔧Raspberry Pi driver for Weewx](#raspberry-pi-driver-for-weewx)
-
-[👩‍🔧CUSTOMIZATION](#customization)
-
-[🖥️Setup the Virtual Private Server (VPS) (Optional)](#setup-the-virtual-private-server-vps-optional)
-
-[🕸️ Setup The VPS Server to act as Webserver](#-setup-the-vps-server-to-act-as-webserver)
-
-[🧑Create Username](#create-username)
-
-[🔳 Change the default shell of weex to bash](#-change-the-default-shell-of-weex-to-bash)
-
-[🔳 CHANGE SHELL COLOR FOR WEEWX TO GREEN](#-change-shell-color-for-weewx-to-green)
-
-[🔳 CHANGE SHELL COLOR FOR ROOT TO RED](#-change-shell-color-for-root-to-red)
-
-[🔑 SETUP KEYPAIR FOR WEEWX TO LOGIN WITHOUT A PASSWORD.](#_Toc169602836)
-
-[🦾Add weewx to sudo](#add-weewx-to-sudo)
-
-[🕸️Install Apache Web Server](#_Toc169602838)
-
-[🕸️Step 1 — Installing Apache](#step-1--installing-apache)
-
-[🧱Step 2 — Adjusting the Firewall](#step-2--adjusting-the-firewall)
-
-[🖥️Step 3 — Checking your Web Server](#step-3--checking-your-web-server)
-
-[👨‍💼Step 4 — Managing the Apache Process](#step-4--managing-the-apache-process)
-
-[💻Setup the domain name to point to the server](#setup-the-domain-name-to-point-to-the-server)
-
-[🖥️Step 5 — Setting Up Virtual Hosts (Recommended)](#step-5--setting-up-virtual-hosts-recommended)
-
-[🗃️Step 6 – Getting Familiar with Important Apache Files and Directories](#step-6--getting-familiar-with-important-apache-files-and-directories)
-
-[💭 Setup the weather station to display data to the internet](#-setup-the-weather-station-to-display-data-to-the-internet)
-
-[🔁Setup Rsync from Weewx to Webserver](#setup-rsync-from-weewx-to-webserver)
-
-[🔐Setup passwordless SSH](#setup-passwordless-ssh)
-
-[🔛ENABLE RSYNC](#enable-rsync)
-
-[🔐Add SSL to the webserver](#add-ssl-to-the-webserver)
-
-[❗Prerequisite](#prerequisite)
-
-[🎖️Step 1 — Installing Certbot](#_Toc169602852)
-
-[🖥️Step 2 — Checking your Apache Virtual Host Configuration](#step-2--checking-your-apache-virtual-host-configuration)
-
-[🔐Step 4 — Obtaining an SSL Certificate](#step-4--obtaining-an-ssl-certificate)
-
-[🎖️Step 5 — Verifying Certbot Auto-Renewal](#step-5--verifying-certbot-auto-renewal)
-
-[📱Setup Android App (Optional)](#setup-android-app-optional)
-
-[➕Step 1, install the Inigo extension for weeWX.](#step-1-install-the-inigo-extension-for-weewx)
-
-[🌝Step 2, Almanac (optional)](#step-2-almanac-optional)
-
-[🔂Step 3, Restarting weeWX](#step-3-restarting-weewx)
-
-[📃Step 4, create inigo-settings.txt](#step-4-create-inigo-settingstxt)
-
-[☔Step 5, using offset rain times (optional)](#step-5-using-offset-rain-times-optional)
-
-[📱Step 6, installing the app](#step-6-installing-the-app)
-
-[🧘‍♂️Setup Belchertown Skin](#setup-belchertown-skin)
-
-[🌧️AerisWeather Forecast API (optional)](#aerisweather-forecast-api-optional)
-
-[📃Install Weewx-Belchertown Skin](#install-weewx-belchertown-skin)
-
-[💿 Setup SMB Server on the Raspberry Pi](#-setup-smb-server-on-the-raspberry-pi)
-
-[🪈 MQTT and MQTT Websockets (optional)](#-mqtt-and-mqtt-websockets-optional)
-
-[Windy (Optional)](#windy-optional)
-
-[🕸️ Sitemap (Optional)](#-sitemap-optional)
-
-[📑 Backup](#-backup)
-
-[❗ Issues and Fixes](#-issues-and-fixes)
-
-[MQTT Won’t work on Firefox](#mqtt-wont-work-on-firefox)
+## Table of Contents
+
+* [📝Document Control](#document-control)
+* [📇 Introduction](#-introduction)
+  + [🔭Images](#Images)
+  + [💫Project Outline:](#project-outline)
+  + [🧑‍🏭Architecture](#architecture)
+  + [🤔Future Enhancements:](#future-enhancements)
+  + [✏️Data Accessibility:](#data-accessibility)
+  + [🎯Motivation:](#motivation)
+  + [🧪Implementation:](#implementation)
+    - [**💻Hardware Setup**:](#_Toc169602807)
+    - [🔳 **Software Setup**:](#_Toc169602808)
+  + [💻 Hardware Used](#-hardware-used)
+  + [🔳 Softwares](#-softwares)
+  + [🔗References And Credits](#references-and-credits)
+* [🤖 Setup the Raspberry Pi](#-setup-the-raspberry-pi)
+  + [💿Flashing the Image](#flashing-the-image)
+  + [🖥️Configure the OS](#configure-the-os)
+    - [🔳 Check for Updates](#-check-for-updates)
+    - [🔑Setup Private/Public Key for passwordless login (Optional)](#setup-privatepublic-key-for-passwordless-login-optional)
+    - [🛠️Configure the Pi to enable certain options](#configure-the-pi-to-enable-certain-options)
+    - [🛠️Install Pip](#install-pip)
+* [🤖 Setup the Raspberry Pi Pico](#-setup-the-raspberry-pi-pico)
+  + [💿Flashing the Image](#flashing-the-image-1)
+* [🌡️ Setup the Weather Station](#-setup-the-weather-station)
+  + [🎐 Setup the Weather Meter](#-setup-the-weather-meter)
+  + [🎐 Connect the sensors and LoRa to Pico - Sender](#-connect-the-sensors-and-lora-to-pico---sender)
+  + [🎐 Connect LoRa to Pi - Receiver](#-connect-lora-to-pi---receiver)
+  + [🔳 Setup the software code (Program)](#-setup-the-software-code-program)
+    - [🛠️Pico](#pico)
+  + [🖥️Install Weewx](#install-weewx)
+    - [👩‍🔧Raspberry Pi driver for Weewx](#raspberry-pi-driver-for-weewx)
+  + [👩‍🔧CUSTOMIZATION](#customization)
+* [🖥️Setup the Virtual Private Server (VPS) (Optional)](#setup-the-virtual-private-server-vps-optional)
+  + [🕸️ Setup The VPS Server to act as Webserver](#-setup-the-vps-server-to-act-as-webserver)
+    - [🧑Create Username](#create-username)
+    - [🔳 Change the default shell of weex to bash](#-change-the-default-shell-of-weex-to-bash)
+    - [🔳 CHANGE SHELL COLOR FOR WEEWX TO GREEN](#-change-shell-color-for-weewx-to-green)
+    - [🔳 CHANGE SHELL COLOR FOR ROOT TO RED](#-change-shell-color-for-root-to-red)
+    - [🔑 SETUP KEYPAIR FOR WEEWX TO LOGIN WITHOUT A PASSWORD.](#_Toc169602836)
+    - [🦾Add weewx to sudo](#add-weewx-to-sudo)
+  + [🕸️Install Apache Web Server](#_Toc169602838)
+    - [🕸️Step 1 — Installing Apache](#step-1--installing-apache)
+    - [🧱Step 2 — Adjusting the Firewall](#step-2--adjusting-the-firewall)
+    - [🖥️Step 3 — Checking your Web Server](#step-3--checking-your-web-server)
+    - [👨‍💼Step 4 — Managing the Apache Process](#step-4--managing-the-apache-process)
+    - [💻Setup the domain name to point to the server](#setup-the-domain-name-to-point-to-the-server)
+    - [🖥️Step 5 — Setting Up Virtual Hosts (Recommended)](#step-5--setting-up-virtual-hosts-recommended)
+    - [🗃️Step 6 – Getting Familiar with Important Apache Files and Directories](#step-6--getting-familiar-with-important-apache-files-and-directories)
+  + [💭 Setup the weather station to display data to the internet](#-setup-the-weather-station-to-display-data-to-the-internet)
+  + [🔁Setup Rsync from Weewx to Webserver](#setup-rsync-from-weewx-to-webserver)
+    - [🔐Setup passwordless SSH](#setup-passwordless-ssh)
+    - [🔛ENABLE RSYNC](#enable-rsync)
+  + [🔐Add SSL to the webserver](#add-ssl-to-the-webserver)
+    - [❗Prerequisite](#prerequisite)
+    - [🎖️Step 1 — Installing Certbot](#_Toc169602852)
+    - [🖥️Step 2 — Checking your Apache Virtual Host Configuration](#step-2--checking-your-apache-virtual-host-configuration)
+    - [🔐Step 4 — Obtaining an SSL Certificate](#step-4--obtaining-an-ssl-certificate)
+    - [🎖️Step 5 — Verifying Certbot Auto-Renewal](#step-5--verifying-certbot-auto-renewal)
+* [📱Setup Android App (Optional)](#setup-android-app-optional)
+  + [➕Step 1, install the Inigo extension for weeWX.](#step-1-install-the-inigo-extension-for-weewx)
+  + [🌝Step 2, Almanac (optional)](#step-2-almanac-optional)
+  + [🔂Step 3, Restarting weeWX](#step-3-restarting-weewx)
+  + [📃Step 4, create inigo-settings.txt](#step-4-create-inigo-settingstxt)
+  + [☔Step 5, using offset rain times (optional)](#step-5-using-offset-rain-times-optional)
+  + [📱Step 6, installing the app](#step-6-installing-the-app)
+* [🧘‍♂️Setup Belchertown Skin](#setup-belchertown-skin)
+  + [🌧️AerisWeather Forecast API (optional)](#aerisweather-forecast-api-optional)
+  + [📃Install Weewx-Belchertown Skin](#install-weewx-belchertown-skin)
+  + [💿 Setup SMB Server on the Raspberry Pi](#-setup-smb-server-on-the-raspberry-pi)
+  + [🪈 MQTT and MQTT Websockets (optional)](#-mqtt-and-mqtt-websockets-optional)
+  + [Windy (Optional)](#windy-optional)
+* [🕸️ Sitemap (Optional)](#-sitemap-optional)
+* [📑 Backup](#-backup)
+* [❗ Issues and Fixes](#-issues-and-fixes)
+  + [MQTT Won’t work on Firefox](#mqtt-wont-work-on-firefox)
 
 # 📝Document Control
 
 | **Date**      | **Version** | **Change**                                                                 |
 |---------------|-------------|----------------------------------------------------------------------------|
 | June 16, 2024 | 1           | Initial build - The breadboard version that is used for a proof of concept |
+
+## 🔭Images
+
+![](media/f8699b2693327e0e36fa073707e493f7.jpeg)![](media/c00aa9a29781a1ecb6856bb5e9e956d3.jpeg)
+
+Weather Station Mobile Site
+
+![](media/b8037eeb36ba5d8697945c8d8abb314f.png)
+
+Desktop Site
+
+![](media/d691d1d5c87503a4d4a2ec2b74908eea.jpeg)
+
+Full Desktop Site
+
 
 # 📇 Introduction
 
