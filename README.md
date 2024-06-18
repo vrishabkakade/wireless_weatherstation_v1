@@ -10,7 +10,7 @@ This project is inspired by [**Raspberry Pi's Personal Weather Station**](https:
 
 
 
-# 📃 Wireless Weather Station v1: A Technical Briefing
+# 📃 Wireless Weather Station v1 - A Technical Briefing
 
 This section summarizes the document, outlining the project's **goals, architecture, and implementation.**
 
@@ -92,24 +92,24 @@ This document provides a detailed guide for building a customized, low-cost wire
 ## Table of Contents
 
 * [📝 Project Overview](#-project-overview)
-* [📃 Wireless Weather Station v1: A Technical Briefing](#-wireless-weather-station-v1:-a-technical-briefing)
+* [📃 Wireless Weather Station v1 - A Technical Briefing](#-wireless-weather-station-v1---a-technical-briefing)
 * [📝Document Control](#document-control)
 * [📇 Introduction](#-introduction)
-  + [🔭Images](#Images)
-  + [💫Project Outline:](#project-outline)
+  + [🔭Images](#images)
+  + [💫Project Outline](#project-outline)
   + [🧑‍🏭Architecture](#architecture)
-  + [🤔Future Enhancements:](#future-enhancements)
-  + [✏️Data Accessibility:](#data-accessibility)
-  + [🎯Motivation:](#motivation)
-  + [🧪Implementation:](#implementation)
-    - [**💻Hardware Setup**:](#_Toc169602807)
-    - [🔳 **Software Setup**:](#_Toc169602808)
+  + [🤔Future Enhancements](#future-enhancements)
+  + [✏️Data Accessibility](#data-accessibility)
+  + [🎯Motivation](#motivation)
+  + [🧪Implementation](#implementation)
+    - [💻Hardware Setup](#hardware-setup)
+    - [🔳Software Setup](#software-setup)
   + [💻 Hardware Used](#-hardware-used)
   + [🔳 Softwares](#-softwares)
   + [🔗References And Credits](#references-and-credits)
 * [🤖 Setup the Raspberry Pi](#-setup-the-raspberry-pi)
   + [💿Flashing the Image](#flashing-the-image)
-  + [🖥️Configure the OS](#configure-the-os)
+  + [🖥️ Configure the OS](#-configure-the-os)
     - [🔳 Check for Updates](#-check-for-updates)
     - [🔑Setup Private/Public Key for passwordless login (Optional)](#setup-privatepublic-key-for-passwordless-login-optional)
     - [🛠️Configure the Pi to enable certain options](#configure-the-pi-to-enable-certain-options)
@@ -204,7 +204,7 @@ Links for this project:
 
 [This file](https://github.com/vrishabkakade/wireless_weatherstation_v1/blob/4c5b5e87e840d6e22a9daa0688d472a94a510e90/Wireless%20Weather%20Station%20Build%20v1.pdf)
 
-## 💫Project Outline:
+## 💫Project Outline
 
 This project aims to construct a wireless personalized weather station capable of measuring various atmospheric and environmental parameters. The station will monitor and display the following:
 
@@ -248,7 +248,7 @@ By leveraging the power of open-source and advanced AI models, this project has 
 
 ![](media/1629fddb7b386b18ff44fc9d199c57f7.jpeg)
 
-## 🤔Future Enhancements:
+## 🤔Future Enhancements
 
 1.  Solar powered transmitter
 2.  Air Quality Index
@@ -256,19 +256,21 @@ By leveraging the power of open-source and advanced AI models, this project has 
 4.  Light Intensity
 5.  Soil Moisture
 
-## ✏️Data Accessibility:
+## ✏️Data Accessibility
 
 The system will publish real-time weather data to one or many websites, allowing remote monitoring of current weather conditions.
 
-## 🎯Motivation:
+## 🎯Motivation
 
 Accurate weather forecasting is crucial, particularly for farmers who rely on timely information for agricultural decision-making. Existing forecasts often cover broad regions and may not accurately reflect local conditions. By gathering localized weather data, farmers can make informed decisions regarding crop protection, fertilization, and irrigation.
 
-## 🧪Implementation:
+## 🧪Implementation
 
-**💻Hardware Setup**: The BME280, Wind Vane, Anemometer, Rain Gauge and LoRa transmitter are connected to Raspberry Pi Pico. The Pico will transmit the data wirelessly to a LoRa-connected Raspberry Pi (in my case I use Pi Zero 2 W, but any version of Pi can be used) which will act as a receiver and process the data received.
+### 💻Hardware Setup
+The BME280, Wind Vane, Anemometer, Rain Gauge and LoRa transmitter are connected to Raspberry Pi Pico. The Pico will transmit the data wirelessly to a LoRa-connected Raspberry Pi (in my case I use Pi Zero 2 W, but any version of Pi can be used) which will act as a receiver and process the data received.
 
-🔳 **Software Setup**: Data storage will be managed using the Weewx platform, while data visualisation will be achieved through customisable skins.
+### 🔳Software Setup
+Data storage will be managed using the Weewx platform, while data visualisation will be achieved through customisable skins.
 
 As for the weather predictions goes – the most important is the rainfall data. Ideally, I should be able to pass the captured data to Google’s Graphcast or any other AI and get a weather forecast for my specific location. The problem with weather forecasts today is that it is given for a much wider region and they might not necessarily apply to our location. For example, in the coffee estates, it would have rained a few kilometres away, but not in that estate. More accurate weather predictions for a particular region will be able to help farmers determine things like when to spray their plants, manure them and irrigate them. Regarding weather forecasts, the rainfall data is of utmost importance. Ideally, the captured data should be compatible with AI platforms like Google's Graphcast, enabling us to obtain weather forecasts specific to our location. The current challenge with weather forecasts is that they are often provided for broader regions, which may not accurately represent local conditions. In agricultural settings, for instance, rainfall can vary significantly within a few kilometers, impacting farming activities such as spraying plants, applying manure, and irrigation. Accurate and localized weather predictions for a particular region can assist farmers in making informed decisions about their crops.
 
@@ -392,7 +394,7 @@ One of the things to do will be to see how the cost of Sparkfun kit can be broug
 
     Once this is complete, remove the microSD card and insert it into the Pi.
 
-## 🖥️Configure the OS
+## 🖥️ Configure the OS
 
 Now the Raspberry Pi is ready to be booted up. Plug it into the power source.
 
