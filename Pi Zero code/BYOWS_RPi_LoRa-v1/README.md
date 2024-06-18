@@ -1,10 +1,10 @@
 # Introduction
 
-byows_rpi - This is an weeWX driver implementation of the Build Your Own Weather
+byows_rpi_lora - This is an weeWX driver implementation of the Build Your Own Weather
 Station guide produced by the [Raspberry Pi Organization](https://projects.raspberrypi.org/en/projects/build-your-own-weather-station/)
 
 The project has been further enhanced to implement LoRa for wireless transmission of data.
-This program receives the data from the LoRa sender (server) and stores the data in Weewx that runs on the Raspberry Pi.
+This program receives the data from the LoRa sender (server) and stores the data in Weewx which runs on the Raspberry Pi.
 
 Distributed under terms of the GPLv3
 

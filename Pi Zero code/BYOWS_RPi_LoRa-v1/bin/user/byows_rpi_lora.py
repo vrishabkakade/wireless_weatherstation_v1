@@ -23,7 +23,7 @@ LoRa code Copyright (c) 2022 Chandra Wijaya Sentosa https://github.com/chandrawi
 
 Raspberry Pi Weather Station driver for Weewx got from Jardi A. Martinez Jordan https://github.com/jardiamj/BYOWS_RPi
 
-Customized by Vrishab Kakade to work for the weather station
+Customized by Vrishab Kakade to work for the weather station - https://github.com/vrishabkakade/wireless_weatherstation_v1
 """
 
 __author__ = "Vrishab Kakade"
@@ -333,9 +333,9 @@ class ByowsRpiStation(object):
         message_no_header_check = message_check[1:]
 
         # Debugging - Writing to file to see the raw data being received
-        with open("output.log", "a") as debug_log_file:
-            print("Raw message received:", message, file=debug_log_file)
-            print("Raw message check received:", message_check, file=debug_log_file)
+        # with open("output.log", "a") as debug_log_file:
+        #    print("Raw message received:", message, file=debug_log_file)
+        #    print("Raw message check received:", message_check, file=debug_log_file)
         log.debug("Raw message received: %s", message)
         log.debug("Raw message check received: %s", message_check)
 
@@ -371,9 +371,9 @@ class ByowsRpiStation(object):
             decoded_tup += [int.from_bytes(tup, byteorder='big', signed=True)]
 
         # Debugging - Writing to file to see where Index out of range error is occurring
-        with open("output.log", "a") as debug_log_file:
-            print("Undecoded:", message_no_header, file=debug_log_file)
-            print("Decoded tup:", decoded_tup, file=debug_log_file)
+        # with open("output.log", "a") as debug_log_file:
+        #    print("Undecoded:", message_no_header, file=debug_log_file)
+        #    print("Decoded tup:", decoded_tup, file=debug_log_file)
         log.debug("Undecoded: %s", message_no_header)
         log.debug("Decoded tup: %s", decoded_tup)
 
@@ -409,11 +409,11 @@ class ByowsRpiStation(object):
                       message_no_header[13], message_no_header[14], round(signal_strength))
 
             # Debugging - Writing to file to see where Index out of range error is occurring
-            with open("output.log", "a") as debug_log_file:
-                print(message[0], "Temperature: ", res[0], "C", "Pressure: ", res[1], "hPa", "Humidity :", res[2], "%",
-                      "Bucket Tips: ", message_no_header[12], "Wind rotations", message_no_header[13],
-                      "Wind Direction:", message_no_header[14], "len(float_value)", len(float_value),
-                      file=debug_log_file)
+            # with open("output.log", "a") as debug_log_file:
+            #    print(message[0], "Temperature: ", res[0], "C", "Pressure: ", res[1], "hPa", "Humidity :", res[2], "%",
+            #          "Bucket Tips: ", message_no_header[12], "Wind rotations", message_no_header[13],
+            #          "Wind Direction:", message_no_header[14], "len(float_value)", len(float_value),
+            #          file=debug_log_file)
 
         except Exception as exc:
             print('[!!!] {err}'.format(err=exc))

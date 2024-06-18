@@ -50,7 +50,9 @@ Changelog:
     1           Initial Release
 
 
-LoRa code got from https://github.com/martynwheeler/u-lora.git
+LoRa code got from Martyn Wheeler https://github.com/martynwheeler/u-lora.git
+
+GitHub page - https://github.com/vrishabkakade/wireless_weatherstation_v1
 """
 
 __author__ = "Vrishab Kakade"
