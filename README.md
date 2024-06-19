@@ -26,7 +26,7 @@ This project aims to build a low-cost (~ ₹12,000), personalized wireless weath
 -   Rainfall
 -   Dew Point
 
-A key goal is integrating the collected data with advanced AI models like Google DeepMind's GraphCast or Microsoft's FarmVibes.AI for localized weather forecasting. This addresses a crucial need for farmers requiring accurate, location-specific predictions to make informed decisions about their crops.
+A key goal is integrating the collected data with advanced open-source AI models like [Google DeepMind's GraphCast](https://deepmind.google/discover/blog/graphcast-ai-model-for-faster-and-more-accurate-global-weather-forecasting/) or [Microsoft's FarmVibes.AI](https://www.microsoft.com/en-us/research/project/project-farmvibes/overview/) for localized weather forecasting. This addresses a crucial need for farmers requiring accurate, location-specific predictions to make informed decisions about their crops.
 
 **Architecture**
 
