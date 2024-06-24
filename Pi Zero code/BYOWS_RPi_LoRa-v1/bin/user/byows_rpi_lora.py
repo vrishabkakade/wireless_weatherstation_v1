@@ -230,7 +230,9 @@ class ByowsRpiStation(object):
         res = []
         # print("Begin LoRa radio")
         if not LoRa.begin():
-            raise Exception("Something wrong, can't begin LoRa radio")
+            # raise Exception("Something wrong, can't begin LoRa radio")
+            print ("Something went wrong with LoRa radio. Can't start it")
+            log.debug("Something went wrong with LoRa radio. Can't start it")
             return None
 
         # Set frequency to 433 Mhz
